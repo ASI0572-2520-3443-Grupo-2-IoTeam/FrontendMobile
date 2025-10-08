@@ -9,7 +9,6 @@ class DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String userName = "Sarah"; // Simulado
     const metrics = [
       {"title": "Humidity", "value": "65%", "icon": Icons.water_drop, "color": Colors.blue},
       {"title": "Temperature", "value": "22°C", "icon": Icons.thermostat, "color": Colors.orange},
@@ -35,7 +34,7 @@ class DashboardView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Hello, $userName!",
+                    "Hello",
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   const SizedBox(height: 4),

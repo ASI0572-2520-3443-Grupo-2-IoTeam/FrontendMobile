@@ -2,161 +2,69 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-/*class AuthApiService {
-  final String baseUrl;
-
-  AuthApiService({this.baseUrl = 'http://10.0.2.2:8090/api'});
-
-  Future<Map<String, dynamic>> register(Map<String, dynamic> data) async {
-  final url = Uri.parse('$baseUrl/auth/register');
-  print('➡️ POST $url');
-  print('📦 Body: $data');
-
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode(data),
-  );
-
-  print('📥 Status: ${response.statusCode}');
-  print('📨 Response: ${response.body}');
-
-  if (response.statusCode == 200 || response.statusCode == 201) {
-    if (response.body.isEmpty) {
-      // El servidor no devolvió JSON (solo status)
-      return {
-        "email": data["email"],
-        "username": data["username"],
-        "role": data["role"]
-      };
-    }
-
-    try {
-      return jsonDecode(response.body);
-    } catch (e) {
-      // Si la respuesta no es JSON válido
-      return {
-        "email": data["email"],
-        "username": data["username"],
-        "role": data["role"]
-      };
-    }
-  } else {
-    throw Exception('Error al registrar usuario: ${response.body}');
-  }
-}
-
-  Future<Map<String, dynamic>> login(Map<String, dynamic> data) async {
-    final uri = Uri.parse('$baseUrl/auth/login');
-    debugPrint("➡️ POST $uri");
-    debugPrint("📦 Body: $data");
-
-    final response = await http.post(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
-
-    debugPrint("📥 Status: ${response.statusCode}");
-    debugPrint("📨 Response: ${response.body}");
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Error al iniciar sesión: ${response.body}');
-    }
-  }
-}*/
-
 class AuthApiService {
   final String baseUrl;
 
-  AuthApiService({this.baseUrl = 'http://10.0.2.2:8090/api'});
+  AuthApiService({this.baseUrl = 'https://fakeapiplant.vercel.app'});
+  final List<Map<String, dynamic>> _fakeUsers = [
+    {
+      "id": "1",
+      "useremail": "demo@gmail.com",
+      "password": "password",
+      "roles": ["ROLE_USER"]
+    },
+    {
+      "id": "2",
+      "useremail": "admin@gmail.com",
+      "password": "adminpass",
+      "roles": ["ROLE_ADMIN", "ROLE_USER"]
+    },
+    {
+      "id": "3",
+      "useremail": "sideral@gmail.com",
+      "password": "sideral",
+      "roles": ["ROLE_USER"]
+    }
+  ];
 
-  /// ==========================
-  /// 🔹 Registro de usuario
-  /// ==========================
-  Future<Map<String, dynamic>> register(Map<String, dynamic> data) async {
-    final url = Uri.parse('$baseUrl/auth/register');
-    debugPrint('➡️ POST $url');
-    debugPrint('📦 Body: $data');
+  /// ===== Login =====
+  Future<Map<String, dynamic>> login({
+    required String email,
+    required String password,
+  }) async {
+    // Simular tiempo de espera de una petición HTTP
+    await Future.delayed(Duration(seconds: 1));
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
-
-    debugPrint('📥 Status: ${response.statusCode}');
-    debugPrint('📨 Response: ${response.body}');
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      if (response.body.isEmpty) {
-        // El servidor no devuelve JSON, devolvemos los datos básicos
-        return {
-          "email": data["email"],
-          "username": data["username"],
-          "role": data["role"],
-        };
-      }
-
-      try {
-        final decoded = jsonDecode(response.body);
-
-        // Validamos que contenga al menos email y username
-        if (decoded is Map<String, dynamic>) {
-          return decoded;
-        } else {
-          throw Exception("Respuesta inválida del servidor");
-        }
-      } catch (e) {
-        debugPrint("⚠️ Respuesta no es JSON válido: $e");
-        return {
-          "email": data["email"],
-          "username": data["username"],
-          "role": data["role"],
-        };
-      }
-    } else {
-      throw Exception('Error al registrar usuario: ${response.body}');
+    try {
+      final user = _fakeUsers.firstWhere(
+        (u) => u['useremail'] == email && u['password'] == password,
+      );
+      // Retornar datos del usuario
+      return {
+        'id': user['id'],
+        'email': user['useremail'],
+        'roles': user['roles'],
+      };
+    } catch (e) {
+      throw Exception('Usuario o contraseña incorrectos');
     }
   }
 
-  /// ==========================
-  /// 🔹 Inicio de sesión
-  /// ==========================
-  Future<Map<String, dynamic>> login(Map<String, dynamic> data) async {
-    final uri = Uri.parse('$baseUrl/auth/login');
-    debugPrint("➡️ POST $uri");
-    debugPrint("📦 Body: $data");
+  /// ===== Obtener todos los usuarios =====
+  Future<List<Map<String, dynamic>>> getAllUsers() async {
+    await Future.delayed(Duration(milliseconds: 500)); // simula request
+    return _fakeUsers;
+  }
 
-    final response = await http.post(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
-
-    debugPrint("📥 Status: ${response.statusCode}");
-    debugPrint("📨 Response: ${response.body}");
-
-    if (response.statusCode == 200) {
-      try {
-        final decoded = jsonDecode(response.body);
-
-        // Si el backend devuelve token y algunos datos de usuario
-        if (decoded is Map<String, dynamic>) {
-          return decoded;
-        } else {
-          throw Exception("Formato inválido de respuesta");
-        }
-      } catch (e) {
-        throw Exception("Error al procesar respuesta del login: $e");
-      }
-    } else if (response.statusCode == 401 || response.statusCode == 403) {
-      throw Exception('Credenciales incorrectas o acceso denegado');
-    } else {
-      throw Exception('Error al iniciar sesión: ${response.body}');
+  /// ===== Obtener usuario por email =====
+  Future<Map<String, dynamic>?> getUserByEmail(String email) async {
+    await Future.delayed(Duration(milliseconds: 500));
+    try {
+      return _fakeUsers.firstWhere((u) => u['useremail'] == email);
+    } catch (e) {
+      return null;
     }
   }
+
+
 }

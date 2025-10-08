@@ -1,3 +1,5 @@
+import 'package:plant_care/iam/data/models/user_model.dart';
+
 import '../repositories/auth_repository.dart';
 
 class LoginUseCase {
@@ -5,7 +7,8 @@ class LoginUseCase {
 
   LoginUseCase(this._repository);
 
-  Future<Map<String, dynamic>> execute({
+  /// Retorna un UserModel con token y estado de login
+  Future<UserModel> execute({
     required String email,
     required String password,
   }) async {
