@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_care/iam/presentation/providers/auth_provider.dart';
+import 'package:plant_care/plants/presentation/widgets/add_plant_dialog.dart';
 import 'package:plant_care/presentation/theme/theme.dart';
 import 'package:provider/provider.dart';
 import '../../../plant_detail/presentation/widgets/plant_detail_view.dart';
@@ -68,8 +69,11 @@ class _MyPlantsViewState extends State<MyPlantsView> {
                           icon: const Icon(Icons.add_circle, size: 32),
                           color: AppTheme.primaryGreen,
                           onPressed: () {
-                            // TODO: acción para añadir plantas
-                          },
+  showDialog(
+    context: context,
+    builder: (_) => const AddPlantDialog(),
+  );
+},
                         ),
                       ],
                     ),

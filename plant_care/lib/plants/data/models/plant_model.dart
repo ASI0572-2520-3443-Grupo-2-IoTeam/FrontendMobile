@@ -5,28 +5,19 @@ import '../../domain/entities/plant_status.dart';
 class PlantModel extends Plant {
 
   PlantModel({
-    required int id,
-    required String userId,
-    required String name,
-    required String type,
-    required String imgUrl,
-    required double humidity,
-    required String lastWatered,
-    required String nextWatering,
-    required PlantStatus status,
-    required String bio,
-  }) : super(
-          id: id,
-          userId: userId,
-          name: name,
-          type: type,
-          imgUrl: imgUrl,
-          humidity: humidity,
-          lastWatered: lastWatered,
-          nextWatering: nextWatering,
-          status: status,
-          bio: bio,
-        );
+    required super.id,
+    required super.userId,
+    required super.name,
+    required super.type,
+    required super.imgUrl,
+    required super.humidity,
+    required super.lastWatered,
+    required super.nextWatering,
+    required super.status,
+    required super.bio,
+    required super.location, 
+
+  });
 
   /// Crear PlantModel desde JSON
   factory PlantModel.fromJson(Map<String, dynamic> json) {
@@ -41,6 +32,7 @@ class PlantModel extends Plant {
     nextWatering: json['nextWatering'] as String,
     status: PlantStatus.fromString(json['status'] as String), // ⚡
     bio: json['bio'] as String,
+    location: json['location'] as String, 
   );
 }
 
@@ -57,6 +49,7 @@ class PlantModel extends Plant {
       'nextWatering': nextWatering,
       'status': status.name, // ⚡ usar name de la clase domain
       'bio': bio,
+      'location': location, 
     };
   }
 }

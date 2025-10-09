@@ -13,6 +13,7 @@ class Plant {
   final String nextWatering;
   final PlantStatus status;
   final String bio;
+  final String location;
 
   Plant({
     required this.id,
@@ -25,6 +26,8 @@ class Plant {
     required this.nextWatering,
     required this.status,
     required this.bio,
+    required this.location,
   });
+
 }
 

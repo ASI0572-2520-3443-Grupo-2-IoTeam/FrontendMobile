@@ -62,6 +62,7 @@ class PlantApiService {
           nextWatering: map['nextWatering'] as String,
           status: PlantStatus.fromString(map['status'] as String), // ⚡ aquí
           bio: map['bio'] as String,
+          location: map['location'] as String,
         );
       }).where((plant) => plant.userId == userId.toString()).toList();
 
