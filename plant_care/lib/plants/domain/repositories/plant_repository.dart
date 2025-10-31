@@ -1,17 +1,19 @@
+import 'package:plant_care/plants/data/models/plant_model.dart';
 import 'package:plant_care/plants/domain/entities/plant.dart';
 
 abstract class PlantRepository {
-  /// Fetches a list of plants from the data source.
-  Future<List<Plant>> fetchPlantsById(String id);
+  /// Obtiene una planta por su ID.
+  Future<Plant?> getPlantById(String id);
 
-  /// Adds a new plant to the data source.
-  Future<void> addPlant(Plant plant);
+  /// Obtiene todas las plantas del usuario autenticado.
+  Future<List<Plant>> fetchPlantsByUserId(String userId, String token);
 
-  /// Updates an existing plant in the data source.
+  /// Agrega una nueva planta y retorna la creada por el backend.
+  Future<Plant> addPlant(Plant plant);
+
+  /// Actualiza una planta existente.
   Future<void> updatePlant(String id, Plant plant);
 
-  /// Deletes a plant from the data source by its ID.
+  /// Elimina una planta por su ID.
   Future<void> deletePlant(String id);
-
-  Future<List<Plant>> fetchPlantsByUserId(String userId, String token);
 }

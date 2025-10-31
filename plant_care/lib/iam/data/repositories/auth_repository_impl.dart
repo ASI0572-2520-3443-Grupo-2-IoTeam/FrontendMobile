@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_care/iam/domain/entities/role.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/user.dart';
@@ -14,7 +15,7 @@ class AuthRepositoryImpl implements AuthRepository {
   /// ==========================
   /// 🔹 Registro de usuario
   /// ==========================
-  @override
+  /*@override
   Future<User> register({
     required String email,
     required String username,
@@ -56,7 +57,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Map<String, dynamic>> login({
   required String email,
   required String password,
-}) async {
+  }) async {
   final response = await _apiService.login({
     'email': email,
     'password': password,
@@ -68,5 +69,53 @@ class AuthRepositoryImpl implements AuthRepository {
     'uuid': response['uuid'],
     'username': response['username'],
   };
-}
+  }*/
+
+  @override
+  Future<UserModel> register({
+    required String email,
+    required String username,
+    required String password,
+    required String role,
+  }) async {
+    // Como es fake API, simulamos registro creando un User
+    final user = User.create(
+      username: username,
+      email: email,
+      password: password,
+      role: Role.fromString(role),
+    );
+
+    // Convertimos a UserModel y marcamos como logueado
+    return UserModel.fromUser(user, token: 'fake-token', isLoggedIn: true);
+  }
+
+  @override
+  Future<UserModel> login({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final userMap = await _apiService.login(email: email, password: password);
+
+      // Creamos un User a partir del Map devuelto por el fake API
+      final user = User(
+        id: userMap['id']?.toString() ?? '',
+        username: userMap['email'].split('@').first, // ejemplo: email -> username
+        email: userMap['email'] ?? '',
+        password: '', // no almacenamos password real
+        role: Role.fromString(
+          (userMap['roles'] as List).contains('ROLE_ADMIN') ? 'ADMIN' : 'USER',
+        ),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
+      // Creamos UserModel con token fake y marcamos como logueado
+      return UserModel.fromUser(user, token: 'fake-jwt-token', isLoggedIn: true);
+    } catch (e) {
+      throw Exception('Login fallido: ${e.toString()}');
+    }
+  }
+
 }
