@@ -1,10 +1,7 @@
 
-
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:plant_care/iam/domain/entities/role.dart';
-import 'package:plant_care/iam/domain/usecases/google_signin_usecase.dart';
 import 'package:plant_care/iam/domain/usecases/google_signin_usecase.dart';
 
 import '../../data/models/user_model.dart';
@@ -15,7 +12,6 @@ import '../../domain/usecases/register_usecase.dart';
 class AuthProvider extends ChangeNotifier {
   /*final LoginUseCase _loginUseCase;
   final RegisterUseCase _registerUseCase;
-  final GoogleSignInUseCase _googleSignInUseCase = GoogleSignInUseCase();
   final GoogleSignInUseCase _googleSignInUseCase = GoogleSignInUseCase();
 
   User? _currentUser;
@@ -91,54 +87,6 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint("❌ Error al registrar usuario: $e");
       throw Exception("Error al registrar usuario: $e");
-    } finally {
-      _setLoading(false);
-    }
-  }
-
-  // ===== Google Sign-In =====
-  Future<void> signInWithGoogle() async {
-  _setLoading(true);
-  try {
-    // Paso 1: obtener cuenta de Google
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    if (googleUser == null) {
-      debugPrint("🚫 Inicio de sesión cancelado por el usuario");
-      return;
-    }
-
-    // Paso 2: obtener token
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    final String? idToken = googleAuth.idToken;
-    if (idToken == null) throw Exception("No se recibió idToken de Google");
-
-    // Paso 3: usar el caso de uso para enviar token al backend
-    final response = await _googleSignInUseCase.execute(idToken);
-
-    // Paso 4: procesar respuesta del backend
-    _token = response['token'];
-    _currentUser = User(
-      id: response['uuid'],
-      email: response['email'],
-      username: response['username'] ?? googleUser.displayName ?? "Usuario",
-      password: '',
-      role: Role.user,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-
-    debugPrint("✅ Usuario autenticado con Google: ${_currentUser?.email}");
-    notifyListeners();
-  } catch (e) {
-    debugPrint("❌ Error al iniciar sesión con Google: $e");
-    throw Exception("Error al iniciar sesión con Google: $e");
-  } finally {
-    _setLoading(false);
-  }
-}
     } finally {
       _setLoading(false);
     }
