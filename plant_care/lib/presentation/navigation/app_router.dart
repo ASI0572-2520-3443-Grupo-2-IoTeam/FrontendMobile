@@ -8,7 +8,9 @@ import '../../plant_detail/presentation/widgets/plant_detail_view.dart';
 import '../../history/presentation/widgets/history_view.dart';
 import '../views/settings_view.dart';
 import '../../iam/presentation/widgets/register_view.dart'; 
-import '../views/search_filter_view.dart'; 
+import '../views/search_filter_view.dart';
+import '../../subscription/presentation/pages/subscription_view.dart';
+
 import 'package:plant_care/presentation/views/splash_view.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -61,6 +63,11 @@ final GoRouter appRouter = GoRouter(
       path: '/search',
       name: 'searchFilter',
       builder: (context, state) => const SearchFilterView(),
+    ),
+    GoRoute(
+      path: '/subscription',
+      name: 'subscription',
+      builder: (context, state) => const SubscriptionView(),
     ),
   ],
 );
