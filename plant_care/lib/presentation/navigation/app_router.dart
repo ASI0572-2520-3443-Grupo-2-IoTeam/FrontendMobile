@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 // Importa las vistas que usaremos
 import '../../iam/presentation/widgets/login_view.dart';
 import '../../dashboard/presentation/widgets/dashboard_view.dart';
-import '../../plants/presentation/widgets/myplants_view.dart';
 import '../../plant_detail/presentation/widgets/plant_detail_view.dart';
 import '../../history/presentation/widgets/history_view.dart';
 import '../views/settings_view.dart';

@@ -1,9 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:plant_care/iam/presentation/providers/auth_provider.dart';
-import 'package:plant_care/plants/data/models/plant_model.dart';
-import 'package:provider/provider.dart';
-import 'package:plant_care/plants/domain/entities/plant_status.dart';
-import 'package:plant_care/plants/presentation/providers/plant_provider.dart';
 
 /*class AddPlantDialog extends StatefulWidget {
   const AddPlantDialog({super.key});

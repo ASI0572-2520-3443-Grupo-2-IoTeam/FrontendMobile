@@ -12,7 +12,20 @@
           "package_name": "com.example.plant_care"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "538459191919-h5quollkdglmragsgoe9vkdlodbmma4u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.plant_care",
+            "certificate_hash": "1297b57006b9abcf5962294297dc4ac9b0b124de"
+          }
+        },
+        {
+          "client_id": "538459191919-8m2iimcc6m4omvb3bgg1fm5mbcl0ei7q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA0EbQZVfy_nBRJMlZZxlizkziX-Fc9xP0"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "538459191919-8m2iimcc6m4omvb3bgg1fm5mbcl0ei7q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "538459191919-4dlv7da6pa03ie7799dp8gk4lohb8513.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.plantCare"
+              }
+            }
+          ]
         }
       }
     }

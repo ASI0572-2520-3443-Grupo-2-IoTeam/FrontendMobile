@@ -1,11 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:plant_care/iam/presentation/providers/auth_provider.dart';
-import 'package:plant_care/plants/presentation/widgets/add_plant_dialog.dart';
-import 'package:plant_care/presentation/theme/theme.dart';
-import 'package:provider/provider.dart';
-import '../../../plant_detail/presentation/widgets/plant_detail_view.dart';
-import '../../../presentation/widgets/custom_bottom_navbar.dart';
-import '../providers/plant_provider.dart';
 
 /*class MyPlantsView extends StatefulWidget {
   const MyPlantsView({super.key});
