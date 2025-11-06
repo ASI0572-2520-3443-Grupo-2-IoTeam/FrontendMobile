@@ -1,9 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plant_care/iam/domain/entities/role.dart';
 import 'package:plant_care/iam/domain/usecases/google_signin_usecase.dart';
-
 import '../../domain/entities/user.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
@@ -23,12 +22,14 @@ class AuthProvider extends ChangeNotifier {
     required GoogleSignInUseCase googleSignInUseCase,
   })  : _loginUseCase = loginUseCase,
         _registerUseCase = registerUseCase,
-        _googleSignInUseCase = googleSignInUseCase;
+        _googleSignInUseCase = googleSignInUseCase {
+    _loadStoredToken();
+  }
 
   // ===== Getters =====
   User? get currentUser => _currentUser;
   String? get token => _token;
-  bool get isAuthenticated => _currentUser != null;
+  bool get isAuthenticated => _currentUser != null && _token != null;
   bool get isLoading => _isLoading;
 
   // ===== Login =====
@@ -36,7 +37,7 @@ class AuthProvider extends ChangeNotifier {
     _setLoading(true);
     try {
       final loginResponse =
-          await _loginUseCase.execute(email: email, password: password);
+      await _loginUseCase.execute(email: email, password: password);
 
       _token = loginResponse.token;
 
@@ -49,6 +50,9 @@ class AuthProvider extends ChangeNotifier {
         createdAt: loginResponse.createdAt,
         updatedAt: loginResponse.updatedAt,
       );
+
+      // Guardar token localmente
+      if (_token != null) await _saveToken(_token!);
 
       debugPrint("✅ Usuario logueado: ${_currentUser?.email}");
     } catch (e) {
@@ -76,6 +80,10 @@ class AuthProvider extends ChangeNotifier {
       );
 
       _currentUser = user;
+
+      // Guardar token del registro
+      if (user.token != null) await _saveToken(user.token!);
+
       debugPrint("✅ Usuario registrado: ${_currentUser?.email}");
     } catch (e) {
       debugPrint("❌ Error al registrar usuario: $e");
@@ -117,6 +125,9 @@ class AuthProvider extends ChangeNotifier {
         updatedAt: DateTime.now(),
       );
 
+      // Guardar token
+      if (_token != null) await _saveToken(_token!);
+
       debugPrint("✅ Usuario autenticado con Google: ${_currentUser?.email}");
     } catch (e) {
       debugPrint("❌ Error al iniciar sesión con Google: $e");
@@ -130,8 +141,31 @@ class AuthProvider extends ChangeNotifier {
   Future<void> logout() async {
     _currentUser = null;
     _token = null;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token'); //Borra el token anterior
     await GoogleSignIn().signOut();
+
+    debugPrint("👋 Sesión cerrada, token eliminado");
     notifyListeners();
+  }
+
+  // ===== Persistencia del token =====
+  Future<void> _saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('auth_token', token);
+    debugPrint("💾 Token guardado localmente");
+  }
+
+  Future<void> _loadStoredToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedToken = prefs.getString('auth_token');
+
+    if (storedToken != null) {
+      _token = storedToken;
+      debugPrint("🔁 Token restaurado de sesión previa");
+      notifyListeners();
+    }
   }
 
   // ===== Private helper =====

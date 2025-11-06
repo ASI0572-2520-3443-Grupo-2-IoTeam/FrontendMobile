@@ -67,6 +67,15 @@ class _SettingsViewState extends State<SettingsView> {
                   ),
                 ),
               ),
+              Card(
+                margin: const EdgeInsets.only(bottom: 16),
+                child: ListTile(
+                  leading: const Icon(Icons.credit_card, color: AppTheme.primaryGreen),
+                  title: const Text("My Subscription"),
+                  subtitle: const Text("Manage or change your plan"),
+                  onTap: () => context.go('/subscription'),
+                ),
+              ),
 
               // Idioma
               Card(
