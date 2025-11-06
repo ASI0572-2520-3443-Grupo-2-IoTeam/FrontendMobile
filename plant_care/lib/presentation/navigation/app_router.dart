@@ -1,15 +1,15 @@
 import 'package:go_router/go_router.dart';
 
 // Importa las vistas que usaremos
-import '../../iam/presentation/widgets/login_view.dart';
+import '../../analytics/presentation/pages/analytics_view.dart';
+import '../../analytics/presentation/pages/reports_view.dart';
 import '../../dashboard/presentation/widgets/dashboard_view.dart';
-import '../../plants/presentation/widgets/myplants_view.dart';
+import '../../iam/presentation/widgets/login_view.dart';
+import '../../iam/presentation/widgets/register_view.dart';
 import '../../plant_detail/presentation/widgets/plant_detail_view.dart';
-import '../../history/presentation/widgets/history_view.dart';
+import '../views/search_filter_view.dart';
 import '../views/settings_view.dart';
-import '../../iam/presentation/widgets/register_view.dart'; 
-import '../views/search_filter_view.dart'; 
-import 'package:plant_care/presentation/views/splash_view.dart';
+import '../views/splash_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -48,9 +48,14 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/history',
-      name: 'history',
-      builder: (context, state) => const HistoryView(),
+      path: '/analytics',
+      name: 'analytics',
+      builder: (context, state) => const AnalyticsView(),
+    ),
+    GoRoute(
+      path: '/reports',
+      name: 'reports',
+      builder: (context, state) => const ReportsView(),
     ),
     GoRoute(
       path: '/settings',

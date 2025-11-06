@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plant_care/iam/domain/usecases/google_signin_usecase.dart';
 import 'package:plant_care/presentation/navigation/app_router.dart';
 import 'package:provider/provider.dart';
+import 'analytics/presentation/providers/analytics_provider.dart';
 import 'iam/data/datasources/auth_api_service.dart';
 import 'iam/data/repositories/auth_repository_impl.dart';
 import 'iam/domain/usecases/login_usecase.dart';
@@ -50,6 +51,7 @@ void main() async {
           ),
         ),
         ChangeNotifierProvider(create: (_) => PlantProvider()),
+        ChangeNotifierProvider(create: (_) => AnalyticsProvider()),
       ],
       child: const PlantCareApp(),
     ),

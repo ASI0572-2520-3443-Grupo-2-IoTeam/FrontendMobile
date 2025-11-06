@@ -38,6 +38,9 @@ class CustomBottomNavBar extends StatelessWidget {
             context.go("/history");
             break;
           case 3:
+            context.go("/analytics");
+            break;
+          case 4:
             context.go("/settings");
             break;
         }
@@ -54,6 +57,10 @@ class CustomBottomNavBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(Icons.history),
           label: "History",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.analytics),
+          label: "Analytics",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
