@@ -1,5 +1,5 @@
-import 'package:plant_care/plants/data/models/plant_model.dart';
-import 'package:plant_care/plants/domain/repositories/plant_repository.dart';
+import 'package:plant_care/plants/infrastructure/models/plant_model.dart';
+import 'package:plant_care/plants/infrastructure/repositories/plant_repository.dart';
 
 
 class AddPlantUseCase {

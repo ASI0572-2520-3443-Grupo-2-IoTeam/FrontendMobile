@@ -76,7 +76,7 @@ class _HistoryViewState extends State<HistoryView> {
 
                       // Filtro por planta
                       DropdownButtonFormField<String>(
-                        value: selectedPlant,
+                        initialValue: selectedPlant,
                         items: plants
                             .map((p) =>
                                 DropdownMenuItem(value: p, child: Text(p)))

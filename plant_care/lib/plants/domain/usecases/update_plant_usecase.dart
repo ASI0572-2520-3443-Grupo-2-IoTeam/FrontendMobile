@@ -1,5 +1,5 @@
 
-import 'package:plant_care/plants/domain/repositories/plant_repository.dart';
+import 'package:plant_care/plants/infrastructure/repositories/plant_repository.dart';
 
 import '../entities/plant.dart';
 

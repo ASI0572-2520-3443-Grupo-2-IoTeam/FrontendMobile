@@ -83,7 +83,7 @@ class _SettingsViewState extends State<SettingsView> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: DropdownButtonFormField<String>(
-                    value: selectedLanguage,
+                    initialValue: selectedLanguage,
                     items: languages
                         .map((lang) =>
                             DropdownMenuItem(value: lang, child: Text(lang)))
@@ -112,7 +112,7 @@ class _SettingsViewState extends State<SettingsView> {
                       notificationsEnabled = value;
                     });
                   },
-                  activeColor: AppTheme.primaryGreen,
+                  activeThumbColor: AppTheme.primaryGreen,
                 ),
               ),
 

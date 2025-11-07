@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:plant_care/plants/data/models/plant_model.dart';
+import 'package:plant_care/plants/infrastructure/models/plant_model.dart';
 
 import '../../domain/entities/plant_status.dart';
 

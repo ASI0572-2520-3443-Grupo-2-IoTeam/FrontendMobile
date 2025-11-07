@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:plant_care/plants/domain/entities/plant.dart';
+import 'package:plant_care/plants/domain/interfaces/plant_interface.dart';
 
-abstract class PlantRepository {
+/*abstract class PlantRepository {
   /// Obtiene una planta por su ID.
   Future<Plant?> getPlantById(String id);
 
@@ -15,4 +17,12 @@ abstract class PlantRepository {
 
   /// Elimina una planta por su ID.
   Future<void> deletePlant(String id);
+}*/
+
+
+class PlantRepository implements PlantInterface {
+  PlantRepository({
+    @required this.connectivity
+  })
+
 }
