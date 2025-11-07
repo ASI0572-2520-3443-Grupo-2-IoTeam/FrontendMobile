@@ -20,9 +20,9 @@ import 'package:plant_care/plants/domain/interfaces/plant_interface.dart';
 }*/
 
 
-class PlantRepository implements PlantInterface {
+/*class PlantRepository implements PlantInterface {
   PlantRepository({
     @required this.connectivity
   })
 
-}
+}*/
