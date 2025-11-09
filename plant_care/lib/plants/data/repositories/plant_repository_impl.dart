@@ -8,7 +8,6 @@ class PlantRepositoryImpl implements PlantRepository {
 
   PlantRepositoryImpl({required this.apiService});
 
-  //  Helper interno: convierte una entidad Plant a su modelo
   PlantModel _toModel(Plant plant) => PlantModel(
         id: plant.id,
         userId: plant.userId,
@@ -21,9 +20,13 @@ class PlantRepositoryImpl implements PlantRepository {
         status: plant.status,
         bio: plant.bio,
         location: plant.location,
+        metrics: plant.metrics,
+        wateringLogs: plant.wateringLogs,
+        createdAt: plant.createdAt,
+        updatedAt: plant.updatedAt,
       );
 
-  //  Helper interno: convierte PlantModel a entidad Plant
+
   Plant _toEntity(PlantModel model) => Plant(
         id: model.id,
         userId: model.userId,
@@ -36,6 +39,10 @@ class PlantRepositoryImpl implements PlantRepository {
         status: model.status,
         bio: model.bio,
         location: model.location,
+        metrics: model.metrics,
+        wateringLogs: model.wateringLogs,
+        createdAt: model.createdAt,
+        updatedAt: model.updatedAt,
       );
 
   @override

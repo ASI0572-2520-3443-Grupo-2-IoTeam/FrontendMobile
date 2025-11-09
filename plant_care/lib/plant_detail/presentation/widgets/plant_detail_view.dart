@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:plant_care/presentation/theme/theme.dart';
+import 'package:provider/provider.dart';
+import 'package:plant_care/plants/presentation/providers/plant_provider.dart';
+import 'package:plant_care/plants/domain/entities/plant.dart';
 
 class PlantDetailView extends StatelessWidget {
   final String plantId;
@@ -8,257 +9,177 @@ class PlantDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> plant = {
-      "id": plantId,
-      "name": "Aloe Vera",
-      "humidity": 45,
-      "lastWatered": "2 days ago",
-      "status": "warning",
-      "nextWatering": "In 2 days",
-      "recommendations": [
-        "Water every 3–4 days",
-        "Needs indirect sunlight",
-        "Avoid overwatering"
-      ],
-      "history": [60, 55, 50, 48, 47, 46, 45],
-    };
-
+    final provider = Provider.of<PlantProvider>(context, listen: false);
+    final plant = provider.plants.firstWhere(
+      (p) => p.id.toString() == plantId,
+      orElse: () => Plant.empty(),
+    );
+    if (plant.id == null || plant.id.toString().isEmpty) {
+      return Scaffold(
+        body: Center(
+            child: Text('Planta no encontrada',
+                style: TextStyle(color: Colors.red))),
+      );
+    }
+    final lastMetric = plant.metrics.isNotEmpty ? plant.metrics.last : null;
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 🔹 Header con animación Hero
-              _SectionCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Botones arriba
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {},
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-
-                    // 🌱 Animación Hero del ícono de planta
-                    Center(
-                      child: Hero(
-                        tag: plant["id"],
-                        child: const Icon(
-                          Icons.local_florist,
-                          size: 80,
-                          color: AppTheme.primaryGreen,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      body: Stack(
+        children: [
+          // Fondo glass
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(0.85),
+                  Colors.blueGrey.withOpacity(0.12)
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Hero(
+                    tag: plant.id,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(32),
+                      child: Image.network(
+                        plant.imgUrl,
+                        width: 120,
+                        height: 120,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          width: 120,
+                          height: 120,
+                          color: Colors.grey.shade200,
+                          alignment: Alignment.center,
+                          child: const Icon(Icons.local_florist, size: 60),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-
-                    // Nombre de la planta
-                    Text(
-                      plant["name"],
-                      style: Theme.of(context).textTheme.headlineLarge,
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Estado (badge) + datos
-                    Wrap(
-                      spacing: 16,
-                      runSpacing: 8,
-                      crossAxisAlignment: WrapCrossAlignment.center,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    plant.name,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(plant.type, style: Theme.of(context).textTheme.bodyLarge),
+                  const SizedBox(height: 16),
+                  _GlassCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: AppTheme.getStatusColor(plant["status"])
-                                .withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                AppTheme.getStatusIcon(plant["status"]),
-                                color: AppTheme.getStatusColor(plant["status"]),
-                                size: 18,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                plant["status"].toUpperCase(),
-                                style: TextStyle(
-                                  color:
-                                      AppTheme.getStatusColor(plant["status"]),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text("Humidity: ${plant["humidity"]}%"),
-                        Text("Last watered: ${plant["lastWatered"]}"),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Gráfico con animación de entrada
-_SectionCard(
-  title: "Humidity over last 7 days",
-  child: SizedBox(
-    height: 200,
-    child: TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 1900),
-      curve: Curves.easeOutCubic,
-      builder: (context, value, child) {
-        return LineChart(
-          LineChartData(
-            titlesData: FlTitlesData(
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(showTitles: true, reservedSize: 40),
-              ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (v, meta) {
-                    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-                    if (v.toInt() < days.length) return Text(days[v.toInt()]);
-                    return const Text("");
-                  },
-                ),
-              ),
-            ),
-            gridData: FlGridData(show: true),
-            borderData: FlBorderData(show: true),
-            lineBarsData: [
-              LineChartBarData(
-                isCurved: true,
-                color: AppTheme.primaryGreen,
-                barWidth: 3,
-                isStrokeCapRound: true,
-                belowBarData: BarAreaData(
-                  show: true,
-                  color: AppTheme.primaryGreen.withOpacity(0.1),
-                ),
-                spots: [
-                  for (int i = 0; i < plant["history"].length; i++)
-                    FlSpot(
-                      i.toDouble(),
-                      // multiplicamos por "value" para animar la altura
-                      plant["history"][i].toDouble() * value,
-                    )
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    ),
-  ),
-),
-
-              const SizedBox(height: 16),
-
-              // Próximo riego
-              _SectionCard(
-                title: "Next watering",
-                child: Row(
-                  children: [
-                    Icon(Icons.water_drop,
-                        color: AppTheme.primaryGreen, size: 28),
-                    const SizedBox(width: 12),
-                    Text(
-                      plant["nextWatering"],
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Recomendaciones
-              _SectionCard(
-                title: "Recommendations",
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (final rec in plant["recommendations"])
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: Row(
+                        Text('Bio:', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 4),
+                        Text(plant.bio, style: Theme.of(context).textTheme.bodyMedium),
+                        const SizedBox(height: 16),
+                        Divider(),
+                        const SizedBox(height: 8),
+                        Text('Último riego:', style: Theme.of(context).textTheme.bodyMedium),
+                        Text(plant.lastWatered, style: Theme.of(context).textTheme.bodyLarge),
+                        const SizedBox(height: 8),
+                        Text('Próximo riego:', style: Theme.of(context).textTheme.bodyMedium),
+                        Text(plant.nextWatering, style: Theme.of(context).textTheme.bodyLarge),
+                        const SizedBox(height: 16),
+                        Divider(),
+                        const SizedBox(height: 8),
+                        Text('Métricas:', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Icon(Icons.check,
-                                size: 20, color: AppTheme.primaryGreen),
-                            const SizedBox(width: 8),
-                            Expanded(child: Text(rec)),
+                            Column(
+                              children: [
+                                Text('Temperatura', style: Theme.of(context).textTheme.bodySmall),
+                                Text('${lastMetric?.temperature ?? 0}°C', style: Theme.of(context).textTheme.bodyLarge),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Text('Humedad', style: Theme.of(context).textTheme.bodySmall),
+                                Text('${lastMetric?.humidity ?? 0}%', style: Theme.of(context).textTheme.bodyLarge),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Text('Luz', style: Theme.of(context).textTheme.bodySmall),
+                                Text('${lastMetric?.light ?? 0} lx', style: Theme.of(context).textTheme.bodyLarge),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Text('H. Suelo', style: Theme.of(context).textTheme.bodySmall),
+                                Text('${lastMetric?.soilHumidity ?? 0}%', style: Theme.of(context).textTheme.bodyLarge),
+                              ],
+                            ),
                           ],
                         ),
-                      )
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-// 🔸 Card reutilizable (usa el cardTheme del tema global)
-class _SectionCard extends StatelessWidget {
-  final String? title;
+class _GlassCard extends StatelessWidget {
   final Widget child;
-
-  const _SectionCard({this.title, required this.child});
-
+  const _GlassCard({required this.child});
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (title != null && title!.isNotEmpty) ...[
-              Text(
-                title!,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-            ],
-            child,
-          ],
-        ),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.55),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.07),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.white.withOpacity(0.18)),
       ),
+      child: child,
+    );
+  }
+}
+
+class _MetricTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  const _MetricTile(
+      {required this.icon, required this.label, required this.value});
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      avatar: Icon(icon, size: 18, color: Colors.blueGrey),
+      label: Text('$label: $value'),
+      backgroundColor: Colors.white.withOpacity(0.8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     );
   }
 }

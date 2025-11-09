@@ -13,20 +13,18 @@ class PlantProvider extends ChangeNotifier {
   String? _message;
   bool _hasFetched = false;
   String? _lastUserId;
+  bool _fetchBlockedOnError = false;
 
   List<Plant> get plants => _plants;
   bool get isLoading => _isLoading;
   String? get message => _message;
 
-  // ==============================================================
-  // 🌱 Cargar plantas por usuario
-  // ==============================================================
   Future<void> fetchPlantsByUserId({
     required String userId,
     required String token,
     bool force = false,
   }) async {
-    if (_hasFetched && !force && _lastUserId == userId) return;
+    if ((_hasFetched || _fetchBlockedOnError) && !force && _lastUserId == userId) return; // no más intentos
 
     _setLoading(true);
     _message = null;
@@ -45,14 +43,13 @@ class PlantProvider extends ChangeNotifier {
     } catch (e) {
       _message = "Error al cargar plantas: $e";
       debugPrint(_message);
+      _hasFetched = true;
+      _fetchBlockedOnError = true;
     } finally {
       _setLoading(false);
     }
   }
 
-  // ==============================================================
-  // ➕ Agregar una nueva planta
-  // ==============================================================
   Future<void> addPlant(Plant newPlant) async {
     _setLoading(true);
     try {
@@ -68,9 +65,6 @@ class PlantProvider extends ChangeNotifier {
     }
   }
 
-  // ==============================================================
-  // ❌ Eliminar una planta
-  // ==============================================================
   Future<void> deletePlant(String plantId) async {
     _setLoading(true);
     try {
@@ -86,9 +80,6 @@ class PlantProvider extends ChangeNotifier {
     }
   }
 
-  // ==============================================================
-  // 🔄 Utilidades internas
-  // ==============================================================
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
@@ -99,6 +90,7 @@ class PlantProvider extends ChangeNotifier {
     _message = null;
     _hasFetched = false;
     _lastUserId = null;
+    _fetchBlockedOnError = false; 
     notifyListeners();
   }
 }

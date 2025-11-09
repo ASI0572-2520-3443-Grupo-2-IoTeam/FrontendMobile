@@ -7,7 +7,7 @@ class PlantStatus {
   static const critical = PlantStatus._('critical');
 
   static PlantStatus fromString(String status) {
-    switch (status.toLowerCase()) { // ⚡ normaliza mayúsculas
+    switch (status.toLowerCase()) {
       case 'healthy':
         return healthy;
       case 'warning':

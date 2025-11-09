@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 class AuthApiService {
   final String baseUrl;
 
-  AuthApiService({this.baseUrl = 'http://10.0.2.2:8090/api/v1'});
+  AuthApiService({this.baseUrl = 'https://plantcare-awcchhb2bfg3hxgf.canadacentral-01.azurewebsites.net/api/v1'});
 
   Future<Map<String, dynamic>> register(Map<String, dynamic> data) async {
     final url = Uri.parse('$baseUrl/auth/register');

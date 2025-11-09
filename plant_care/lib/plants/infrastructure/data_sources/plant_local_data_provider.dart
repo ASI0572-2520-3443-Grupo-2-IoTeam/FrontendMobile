@@ -11,12 +11,10 @@ class PlantLocalDataProvider {
   }
 
   Future<bool>? cacheProduct(PlantModel plant) {
-    //todo: cache model
     return null;
   }
 
   Future<bool>? cacheProducts(List<PlantModel> plants) {
-    //todo: cache model
     return null;
   }
 }

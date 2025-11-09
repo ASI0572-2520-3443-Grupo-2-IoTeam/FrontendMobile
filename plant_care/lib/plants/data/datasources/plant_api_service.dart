@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:plant_care/plants/infrastructure/models/plant_model.dart';
 
-import '../../domain/entities/plant_status.dart';
-
 /// Service responsible for communicating with the Plant API.
 class PlantApiService {
   /// Base URL of the backend API.
   final String baseUrl;
 
-  PlantApiService({this.baseUrl = 'https://fakeapiplant.vercel.app'});
+  final Map<String, Future<List<PlantModel>>> _inFlightByUser = {};
+
+  static bool enablePlantsFetch = false;
+
+  PlantApiService({this.baseUrl = 'https://plantcare-awcchhb2bfg3hxgf.canadacentral-01.azurewebsites.net/api/v1'});
 
   /// Get a plant by its unique ID.
   Future<PlantModel?> getPlantById(String plantId) async {
@@ -34,38 +36,38 @@ class PlantApiService {
 
   /// Get all plants belonging to a specific user (query parameter)
   Future<List<PlantModel>> getPlantsByUserId(String userId, {required String token}) async {
-    final id = userId.toString();
-    final url = Uri.parse('$baseUrl/plants?userId=$id');
+    if (!enablePlantsFetch) return [];
+
+    final existing = _inFlightByUser[userId];
+    if (existing != null) return existing;
+
+    final future = _getPlantsByUserIdInternal(userId, token);
+    _inFlightByUser[userId] = future;
+    try {
+      final result = await future;
+      return result;
+    } finally {
+      _inFlightByUser.remove(userId);
+    }
+  }
+
+  Future<List<PlantModel>> _getPlantsByUserIdInternal(String userId, String token) async {
+    final url = Uri.parse('$baseUrl/plants/user/$userId');
 
     final response = await http.get(
       url,
       headers: {
-        'Content-Type': 'application/json',
+        'accept': '*/*',
         'Authorization': 'Bearer $token',
       },
     );
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = json.decode(response.body);
-
-      // ⚡ Convertir cada JSON a PlantModel usando PlantStatus correcto
       final plants = jsonList.map((json) {
         final map = json as Map<String, dynamic>;
-        return PlantModel(
-          id: map['id'] as int,
-          userId: map['userId'].toString(),
-          name: map['name'] as String,
-          type: map['type'] as String,
-          imgUrl: map['imgUrl'] as String,
-          humidity: (map['humidity'] as num).toDouble(),
-          lastWatered: map['lastWatered'] as String,
-          nextWatering: map['nextWatering'] as String,
-          status: PlantStatus.fromString(map['status'] as String), // ⚡ aquí
-          bio: map['bio'] as String,
-          location: map['location'] as String,
-        );
-      }).where((plant) => plant.userId == userId.toString()).toList();
-
+        return PlantModel.fromJson(map);
+      }).toList();
       return plants;
     } else if (response.statusCode == 403) {
       throw Exception('Acceso denegado: token inválido o permisos insuficientes.');

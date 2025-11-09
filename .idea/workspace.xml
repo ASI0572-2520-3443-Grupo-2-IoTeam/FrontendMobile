@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="090472a7-5f66-4b93-95b4-8884d53f185f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/plant_care/lib/iam/data/datasources/auth_api_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/lib/iam/data/datasources/auth_api_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/lib/plant_detail/presentation/widgets/plant_detail_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/lib/plant_detail/presentation/widgets/plant_detail_view.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/lib/plants/data/datasources/plant_api_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/lib/plants/data/datasources/plant_api_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/lib/plants/data/repositories/plant_repository_impl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/lib/plants/data/repositories/plant_repository_impl.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/lib/plants/domain/entities/plant.dart" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/lib/plants/domain/entities/plant.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/lib/plants/infrastructure/models/plant_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/lib/plants/infrastructure/models/plant_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/lib/plants/infrastructure/repositories/plant_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/lib/plants/infrastructure/repositories/plant_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/lib/plants/presentation/providers/plant_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/lib/plants/presentation/providers/plant_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/lib/plants/presentation/widgets/myplants_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/lib/plants/presentation/widgets/myplants_view.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/lib/presentation/navigation/app_router.dart" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/lib/presentation/navigation/app_router.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/linux/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/linux/flutter/generated_plugin_registrant.h" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/linux/flutter/generated_plugin_registrant.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/linux/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/linux/flutter/generated_plugins.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/windows/flutter/generated_plugin_registrant.h" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/windows/flutter/generated_plugin_registrant.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plant_care/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/plant_care/windows/flutter/generated_plugins.cmake" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "dart.analysis.tool.window.visible": "false"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="plantcare" type="FlutterRunConfigurationType" factoryName="Flutter">
+      <option name="filePath" value="$PROJECT_DIR$/plant_care/lib/main.dart" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="TaskManager">
+    <servers />
+  </component>
+</project>
