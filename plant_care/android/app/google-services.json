@@ -1,51 +1,26 @@
 {
   "project_info": {
-    "project_number": "538459191919",
-    "project_id": "plant-care-ab02b",
-    "storage_bucket": "plant-care-ab02b.firebasestorage.app"
+    "project_number": "926807285182",
+    "project_id": "plant-care-969e6",
+    "storage_bucket": "plant-care-969e6.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:538459191919:android:7895811ab65da7db34eb9a",
+        "mobilesdk_app_id": "1:926807285182:android:0d28f1301043d53615adef",
         "android_client_info": {
           "package_name": "com.example.plant_care"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "538459191919-h5quollkdglmragsgoe9vkdlodbmma4u.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.plant_care",
-            "certificate_hash": "1297b57006b9abcf5962294297dc4ac9b0b124de"
-          }
-        },
-        {
-          "client_id": "538459191919-8m2iimcc6m4omvb3bgg1fm5mbcl0ei7q.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA0EbQZVfy_nBRJMlZZxlizkziX-Fc9xP0"
+          "current_key": "AIzaSyB5TKdHQT8xk48--c4lphZXVwPTH9W_LEM"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "538459191919-8m2iimcc6m4omvb3bgg1fm5mbcl0ei7q.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "538459191919-4dlv7da6pa03ie7799dp8gk4lohb8513.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.plantCare"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

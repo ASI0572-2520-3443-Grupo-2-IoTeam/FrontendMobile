@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -50,19 +41,47 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBctietMgO0fQVRAbfslujKHsfWOI9ZYrE',
-    appId: '1:179519128681:android:906ed8bf99307d6a71cef8',
-    messagingSenderId: '179519128681',
-    projectId: 'plant-care-1daf8',
-    storageBucket: 'plant-care-1daf8.firebasestorage.app',
+    apiKey: 'AIzaSyB5TKdHQT8xk48--c4lphZXVwPTH9W_LEM',
+    appId: '1:926807285182:android:0d28f1301043d53615adef',
+    messagingSenderId: '926807285182',
+    projectId: 'plant-care-969e6',
+    storageBucket: 'plant-care-969e6.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAIGSjklB6AxrJosHd8yYrsSbODqL54uoI',
-    appId: '1:179519128681:ios:8798586dc0c01cae71cef8',
-    messagingSenderId: '179519128681',
-    projectId: 'plant-care-1daf8',
-    storageBucket: 'plant-care-1daf8.firebasestorage.app',
+    apiKey: 'AIzaSyBEg0ixjmXvDJHGAosGM224VJjwS5ekU60',
+    appId: '1:926807285182:ios:8481caa0bc20388415adef',
+    messagingSenderId: '926807285182',
+    projectId: 'plant-care-969e6',
+    storageBucket: 'plant-care-969e6.firebasestorage.app',
     iosBundleId: 'com.example.plantCare',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAPeBTDDk1Rq_q334fr8Omcz4t8M14nw8o',
+    appId: '1:926807285182:web:3908ea8088ef47fe15adef',
+    messagingSenderId: '926807285182',
+    projectId: 'plant-care-969e6',
+    authDomain: 'plant-care-969e6.firebaseapp.com',
+    storageBucket: 'plant-care-969e6.firebasestorage.app',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBEg0ixjmXvDJHGAosGM224VJjwS5ekU60',
+    appId: '1:926807285182:ios:8481caa0bc20388415adef',
+    messagingSenderId: '926807285182',
+    projectId: 'plant-care-969e6',
+    storageBucket: 'plant-care-969e6.firebasestorage.app',
+    iosBundleId: 'com.example.plantCare',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAPeBTDDk1Rq_q334fr8Omcz4t8M14nw8o',
+    appId: '1:926807285182:web:6921c8630eae37f615adef',
+    messagingSenderId: '926807285182',
+    projectId: 'plant-care-969e6',
+    authDomain: 'plant-care-969e6.firebaseapp.com',
+    storageBucket: 'plant-care-969e6.firebasestorage.app',
+  );
+
 }
