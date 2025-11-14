@@ -72,11 +72,11 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
   @override
   Future<Subscription> cancelSubscription(String userId) async {
     final headers = await _getHeaders();
-    final url = '$baseUrl/subscriptions/$userId/cancel';
+    final url = '$baseUrl/subscriptions/$userId/cancelled';
     print('➡️ POST $url');
 
     final response = await http.post(Uri.parse(url), headers: headers);
-    _debugResponse(response, 'POST /subscriptions/$userId/cancel');
+    _debugResponse(response, 'POST /subscriptions/$userId/cancelled');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -89,11 +89,11 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
   @override
   Future<Subscription> activateSubscription(String userId) async {
     final headers = await _getHeaders();
-    final url = '$baseUrl/subscriptions/$userId/reactivate';
+    final url = '$baseUrl/subscriptions/$userId/active';
     print('➡️ POST $url');
 
     final response = await http.post(Uri.parse(url), headers: headers);
-    _debugResponse(response, 'POST /subscriptions/$userId/reactivate');
+    _debugResponse(response, 'POST /subscriptions/$userId/active');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
