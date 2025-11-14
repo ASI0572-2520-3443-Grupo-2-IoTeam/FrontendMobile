@@ -62,7 +62,7 @@ class AuthApiService {
   }
 
   Future<Map<String, dynamic>> googleSignIn(String idToken) async {
-    final uri = Uri.parse('$baseUrl/auth/google/mobile');
+    final uri = Uri.parse('$baseUrl/authentication/google/signin');
     debugPrint("➡️ POST $uri");
 
     final response = await http.post(
