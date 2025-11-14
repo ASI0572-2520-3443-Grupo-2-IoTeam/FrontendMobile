@@ -52,15 +52,28 @@ class PlantApiService {
   }
 
   Future<List<PlantModel>> _getPlantsByUserIdInternal(String userId, String token) async {
-    final url = Uri.parse('$baseUrl/plants/user/$userId');
+    // Backend expects the user-scoped collection at /users/{userId}/plants
+    final url = Uri.parse('$baseUrl/users/$userId/plants');
+
+    if (token.isEmpty) {
+      throw Exception('Acceso denegado: token vacío.');
+    }
+
+    // Debug token: mostrar longitud y primeros 8 caracteres para diagnóstico sin exponer todo el token
+    final safeTokenPreview = token.length > 8 ? token.substring(0, 8) + '...' : token;
+    debugPrint('🔐 Token preview: length=${token.length}, preview=$safeTokenPreview');
 
     final response = await http.get(
       url,
       headers: {
-        'accept': '*/*',
+        'Accept': 'application/json',
         'Authorization': 'Bearer $token',
       },
     );
+
+    debugPrint('➡️ GET $url');
+    debugPrint('📥 Status: ${response.statusCode}');
+    debugPrint('📨 Body: ${response.body}');
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = json.decode(response.body);
@@ -71,6 +84,8 @@ class PlantApiService {
       return plants;
     } else if (response.statusCode == 403) {
       throw Exception('Acceso denegado: token inválido o permisos insuficientes.');
+    } else if (response.statusCode == 401) {
+      throw Exception('No autorizado: token inválido o expirado.');
     } else if (response.statusCode == 404) {
       throw Exception('No se encontraron plantas para este usuario.');
     } else {
