@@ -9,7 +9,7 @@ class AuthApiService {
   AuthApiService({this.baseUrl = 'https://plantcare-awcchhb2bfg3hxgf.canadacentral-01.azurewebsites.net/api/v1'});
 
   Future<Map<String, dynamic>> register(Map<String, dynamic> data) async {
-    final url = Uri.parse('$baseUrl/auth/register');
+    final url = Uri.parse('$baseUrl/authentication/signup');
     debugPrint('➡️ POST $url');
     debugPrint('📦 Body: $data');
 
@@ -39,7 +39,7 @@ class AuthApiService {
     required String email,
     required String password,
   }) async {
-    final uri = Uri.parse('$baseUrl/auth/login');
+    final uri = Uri.parse('$baseUrl/authentication/signin');
     debugPrint("➡️ POST $uri");
     debugPrint("📦 Body: {email: $email, password: ***}");
 
