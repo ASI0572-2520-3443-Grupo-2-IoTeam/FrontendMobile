@@ -10,7 +10,6 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
 
   SubscriptionRepositoryImpl({required this.baseUrl});
 
-  // 🧩 Obtiene el token dinámicamente del almacenamiento local
   Future<Map<String, String>> _getHeaders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');

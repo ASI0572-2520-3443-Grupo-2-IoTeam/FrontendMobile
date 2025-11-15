@@ -24,7 +24,9 @@ class _SubscriptionViewState extends State<SubscriptionView> {
   @override
   void initState() {
     super.initState();
-    repo = SubscriptionRepositoryImpl(baseUrl: "http://10.0.2.2:8090/api/v1");
+    repo = SubscriptionRepositoryImpl(
+        baseUrl: "https://plantcare-awcchhb2bfg3hxgf.canadacentral-01.azurewebsites.net/api/v1"
+    );
     _loadSubscription();
   }
 
