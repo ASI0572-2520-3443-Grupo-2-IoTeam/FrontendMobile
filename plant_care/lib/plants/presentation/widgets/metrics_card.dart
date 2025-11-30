@@ -11,35 +11,37 @@ class MetricsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     final lastUpdated = DateFormat('d MMM, hh:mm a').format(metric.createdAt);
 
     return Card(
-      elevation: 0, 
+      elevation: 0,
       color: colorScheme.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(
-          24,
-        ), 
-        side: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(
+          color: colorScheme.outlineVariant.withOpacity(0.3),
+        ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-
+            // Header simétrico
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _DeviceBadge(deviceId: metric.deviceId),
+                Expanded(
+                  child: _DeviceBadge(deviceId: metric.deviceId),
+                ),
+                const SizedBox(width: 12),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.access_time_rounded,
-                      size: 14,
+                      size: 16,
                       color: theme.hintColor,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 6),
                     Text(
                       lastUpdated,
                       style: theme.textTheme.labelMedium?.copyWith(
@@ -51,8 +53,9 @@ class MetricsCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
+            // Grid de métricas 2x2 perfectamente simétrico
             Row(
               children: [
                 Expanded(
@@ -61,24 +64,22 @@ class MetricsCard extends StatelessWidget {
                     value: metric.temperature.toStringAsFixed(1),
                     unit: '°C',
                     icon: Icons.thermostat_rounded,
-                    accentColor: const Color(0xFFFF6B6B), 
+                    accentColor: const Color(0xFFFF6B6B),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
                   child: _MetricTile(
                     label: 'Humidity',
-                    value: metric.humidity.toStringAsFixed(
-                      0,
-                    ), 
+                    value: metric.humidity.toStringAsFixed(0),
                     unit: '%',
                     icon: Icons.water_drop_rounded,
-                    accentColor: const Color(0xFF4ECDC4), 
+                    accentColor: const Color(0xFF4ECDC4),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -87,17 +88,17 @@ class MetricsCard extends StatelessWidget {
                     value: metric.light.toStringAsFixed(0),
                     unit: 'lx',
                     icon: Icons.wb_sunny_rounded,
-                    accentColor: const Color(0xFFFFD93D), 
+                    accentColor: const Color(0xFFFFD93D),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
                   child: _MetricTile(
                     label: 'Soil',
                     value: metric.soilHumidity.toStringAsFixed(0),
                     unit: '%',
                     icon: Icons.grass_rounded,
-                    accentColor: const Color(0xFF6A994E), 
+                    accentColor: const Color(0xFF6A994E),
                   ),
                 ),
               ],
@@ -109,7 +110,6 @@ class MetricsCard extends StatelessWidget {
   }
 }
 
-
 class _DeviceBadge extends StatelessWidget {
   final String deviceId;
   const _DeviceBadge({required this.deviceId});
@@ -117,32 +117,39 @@ class _DeviceBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
+        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          width: 1,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.sensors,
-            size: 16,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          const SizedBox(width: 6),
-          
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.35,
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+              shape: BoxShape.circle,
             ),
+            child: Icon(
+              Icons.sensors,
+              size: 14,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Flexible(
             child: Text(
               deviceId,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
-              ),
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -173,61 +180,70 @@ class _MetricTile extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
       decoration: BoxDecoration(
         color: accentColor.withOpacity(0.08),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: accentColor.withOpacity(0.15),
+          width: 1,
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // Ícono circular
           Container(
-            padding: const EdgeInsets.all(8),
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
-              color: accentColor.withOpacity(0.16),
+              color: accentColor.withOpacity(0.15),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: accentColor, size: 20),
+            child: Icon(icon, color: accentColor, size: 24),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
-          Column(
-            mainAxisSize: MainAxisSize.min,
+          // Valor y unidad
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
             children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  value,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: theme.colorScheme.onSurface,
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    value,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: theme.colorScheme.onSurface,
+                      height: 1,
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(width: 2),
               Text(
                 unit,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
 
+          // Label
           Text(
             label.toUpperCase(),
             textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.outline,
               fontWeight: FontWeight.w600,
-              fontSize: 11,
-              letterSpacing: 0.6,
+              letterSpacing: 1,
             ),
           ),
         ],

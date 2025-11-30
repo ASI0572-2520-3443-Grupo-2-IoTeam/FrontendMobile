@@ -5,7 +5,6 @@ import 'package:plant_care/iam/presentation/providers/auth_provider.dart';
 import '../pages/plants_list_page.dart';
 import '../providers/plant_provider.dart';
 
-// MyPlantsView now uses the real PlantsCubit wired to the remote API.
 class MyPlantsView extends StatelessWidget {
   const MyPlantsView({super.key});
 
@@ -16,8 +15,7 @@ class MyPlantsView extends StatelessWidget {
     final token = auth.token;
 
     if (userId == null || token == null) {
-      // Si no hay credenciales, mostramos la pantalla con estado vacío
-      // (el listado esperará por datos y mostrará 'Sin plantas').
+    
       return const PlantsListPage();
     }
 

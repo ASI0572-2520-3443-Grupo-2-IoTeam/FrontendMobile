@@ -1,20 +1,18 @@
-import 'dart:ui'; 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:plant_care/plants/domain/entities/plant.dart';
 import 'package:plant_care/plants/domain/value_objetcs/plant_status.dart';
-import 'package:plant_care/plants/presentation/widgets/metrics_card.dart'; 
+import 'package:plant_care/plants/presentation/widgets/metrics_card.dart';
 
 class PlantDetailPage extends StatelessWidget {
-  final Plant plant; 
+  final Plant plant;
 
   const PlantDetailPage({super.key, required this.plant});
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(title: Text(plant.name)),
-      
       body: SafeArea(
         top: false,
         bottom: true,
@@ -30,69 +28,94 @@ class PlantDetailPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-    const backgroundColor = Color(0xFFF2F2F7);
+    final theme = Theme.of(context);
+    final backgroundColor = theme.colorScheme.surfaceContainerLowest;
 
     return Container(
       color: backgroundColor,
       child: CustomScrollView(
-        physics: const BouncingScrollPhysics(), 
+        physics: const BouncingScrollPhysics(),
         slivers: [
           _buildAppBar(context),
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.fromLTRB(
-                20,
-                20,
-                20,
+                24,
+                24,
+                24,
                 40 + MediaQuery.of(context).padding.bottom,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Título con animación
                   Text(
                     plant.name,
-                    style: const TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.5,
-                      color: Colors.black,
+                    style: theme.textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -1,
+                      height: 1.1,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
 
-                  
-                  Text(
-                    plant.type.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[500],
-                      letterSpacing: 1.2,
+                  // Tipo con badge moderno
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
                     ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  
-                  _buildInfoRow(context),
-                  const SizedBox(height: 24),
-
-                  
-                  _iOSSectionTitle('Biography'),
-                  _iOSContentContainer(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          theme.colorScheme.primaryContainer,
+                          theme.colorScheme.primaryContainer.withOpacity(0.6),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withOpacity(0.2),
+                        width: 1.5,
+                      ),
+                    ),
                     child: Text(
-                      plant.bio,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        height: 1.5,
-                        color: Color(0xFF3A3A3C), 
+                      plant.type.toUpperCase(),
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: theme.colorScheme.primary,
+                        letterSpacing: 1.5,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
 
-                  
-                  _iOSSectionTitle('Irrigation Cycle'),
+                  // Info Row modernizado
+                  _buildInfoRow(context),
+                  const SizedBox(height: 32),
+
+                  // Biography
+                  _ModernSectionTitle(
+                    title: 'Biography',
+                    icon: Icons.auto_stories_rounded,
+                  ),
+                  const SizedBox(height: 12),
+                  _ModernContentCard(
+                    child: Text(
+                      plant.bio,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        height: 1.6,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Irrigation Cycle
+                  _ModernSectionTitle(
+                    title: 'Irrigation Cycle',
+                    icon: Icons.water_drop_rounded,
+                  ),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
@@ -100,32 +123,50 @@ class PlantDetailPageContent extends StatelessWidget {
                           label: 'Last watering',
                           date: plant.lastWatered,
                           icon: Icons.water_drop_rounded,
-                          color: const Color(0xFF007AFF), 
+                          color: const Color(0xFF007AFF),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: _WateringTile(
                           label: 'Next watering',
                           date: plant.nextWatering,
                           icon: Icons.access_alarm_rounded,
-                          color: const Color(0xFFFF9500), 
+                          color: const Color(0xFFFF9500),
                           isNext: true,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
 
-               
-                  _iOSSectionTitle('Live sensors'),
+                  // Live sensors
+                  _ModernSectionTitle(
+                    title: 'Live Sensors',
+                    icon: Icons.sensors,
+                  ),
+                  const SizedBox(height: 12),
                   if (plant.latestMetric != null)
-                  
                     MetricsCard(metric: plant.latestMetric!)
                   else
-                    _iOSContentContainer(
-                      child: const Center(
-                        child: Text('Connecting sensors...'),
+                    _ModernContentCard(
+                      child: Center(
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.sensors_off,
+                              size: 48,
+                              color: theme.colorScheme.outline.withOpacity(0.5),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'Connecting sensors...',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                 ],
@@ -137,68 +178,38 @@ class PlantDetailPageContent extends StatelessWidget {
     );
   }
 
-
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
-      expandedHeight: 350,
+      expandedHeight: 380,
       backgroundColor: Colors.transparent,
       stretch: true,
       pinned: true,
-      leading: Container(
-        margin: const EdgeInsets.all(8),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(50),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-            child: Container(
-              color: const Color.fromARGB(127, 255, 255, 255),
-              child: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios_new,
-                  size: 18,
-                  color: Colors.black,
-                ),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ),
-          ),
-        ),
+      leading: _GlassButton(
+        icon: Icons.arrow_back_ios_new,
+        onPressed: () => Navigator.of(context).pop(),
       ),
       actions: [
-        Container(
-          margin: const EdgeInsets.all(8),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-              child: Container(
-                color: const Color.fromARGB(127, 255, 255, 255),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.more_horiz,
-                    size: 18,
-                    color: Colors.black,
-                  ),
-                  onPressed: () {},
-                ),
-              ),
-            ),
-          ),
+        _GlassButton(
+          icon: Icons.more_horiz,
+          onPressed: () {},
         ),
       ],
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(
           fit: StackFit.expand,
           children: [
-           
             Image.network(plant.imgUrl, fit: BoxFit.cover),
-            
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.black.withOpacity(0.2), Colors.transparent],
+                  colors: [
+                    Colors.black.withOpacity(0.4),
+                    Colors.transparent,
+                    Colors.transparent,
+                  ],
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
+                  stops: const [0.0, 0.3, 1.0],
                 ),
               ),
             ),
@@ -208,161 +219,371 @@ class PlantDetailPageContent extends StatelessWidget {
     );
   }
 
-  // --- Helpers iOS-like ---
   Widget _buildInfoRow(BuildContext context) {
+    final theme = Theme.of(context);
     Color statusColor;
     String statusText;
+    IconData statusIcon;
+
     switch (plant.status) {
       case PlantStatus.HEALTHY:
-        statusColor = Colors.green;
+        statusColor = const Color(0xFF34C759);
         statusText = 'Healthy';
+        statusIcon = Icons.check_circle_rounded;
         break;
       case PlantStatus.WARNING:
-        statusColor = Colors.orange;
+        statusColor = const Color(0xFFFF9500);
         statusText = 'Warning';
+        statusIcon = Icons.warning_rounded;
         break;
       case PlantStatus.DANGER:
-        statusColor = Colors.red;
+        statusColor = const Color(0xFFFF3B30);
         statusText = 'In danger';
+        statusIcon = Icons.error_rounded;
         break;
       case PlantStatus.CRITICAL:
-        statusColor = Colors.deepPurple;
+        statusColor = const Color(0xFFAF52DE);
         statusText = 'Critical';
+        statusIcon = Icons.priority_high_rounded;
         break;
       case PlantStatus.UNKNOWN:
         statusColor = Colors.grey;
         statusText = 'Unknown';
+        statusIcon = Icons.help_rounded;
         break;
     }
 
     return Row(
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: statusColor.withAlpha(31),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: statusColor,
-                  shape: BoxShape.circle,
-                ),
+        // Status Badge moderno
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  statusColor.withOpacity(0.15),
+                  statusColor.withOpacity(0.08),
+                ],
               ),
-              const SizedBox(width: 8),
-              Text(
-                statusText,
-                style: TextStyle(
-                  color: statusColor,
-                  fontWeight: FontWeight.w600,
-                ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: statusColor.withOpacity(0.3),
+                width: 1.5,
               ),
-            ],
+              boxShadow: [
+                BoxShadow(
+                  color: statusColor.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    statusIcon,
+                    size: 16,
+                    color: statusColor,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Flexible(
+                  child: Text(
+                    statusText,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: statusColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 16),
+
+        // Location Badge moderno
         Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              const Icon(
-                Icons.location_on_outlined,
-                size: 18,
-                color: Colors.grey,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+                width: 1.5,
               ),
-              const SizedBox(width: 6),
-              Flexible(
-                child: Text(
-                  plant.location,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.location_on_rounded,
+                  size: 18,
+                  color: theme.colorScheme.primary,
                 ),
-              ),
-            ],
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    plant.location,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _iOSSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: Colors.black87,
+// Componentes reutilizables modernos
+class _GlassButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const _GlassButton({
+    required this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(50),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.25),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1.5,
+              ),
+            ),
+            child: IconButton(
+              icon: Icon(icon, size: 20, color: Colors.white),
+              onPressed: onPressed,
+            ),
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget _iOSContentContainer({required Widget child}) {
+class _ModernSectionTitle extends StatelessWidget {
+  final String title;
+  final IconData icon;
+
+  const _ModernSectionTitle({
+    required this.title,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                theme.colorScheme.primary.withOpacity(0.15),
+                theme.colorScheme.primary.withOpacity(0.08),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            icon,
+            size: 20,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.3,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ModernContentCard extends StatelessWidget {
+  final Widget child;
+
+  const _ModernContentCard({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withOpacity(0.3),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.shadow.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: child,
     );
   }
+}
 
-  Widget _WateringTile({
-    required String label,
-    required DateTime date,
-    required IconData icon,
-    required Color color,
-    bool isNext = false,
-  }) {
+class _WateringTile extends StatelessWidget {
+  final String label;
+  final DateTime date;
+  final IconData icon;
+  final Color color;
+  final bool isNext;
+
+  const _WateringTile({
+    required this.label,
+    required this.date,
+    required this.icon,
+    required this.color,
+    this.isNext = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final formatted = '${date.day}/${date.month}/${date.year}';
-    return _iOSContentContainer(
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withOpacity(0.12),
+            color.withOpacity(0.06),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: color.withOpacity(0.25),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withAlpha(31),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, color: color, size: 20),
-              ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(formatted, style: TextStyle(color: Colors.grey[600])),
+          // Ícono circular
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  color.withOpacity(0.25),
+                  color.withOpacity(0.15),
                 ],
               ),
-            ],
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 24),
           ),
+          const SizedBox(height: 16),
+
+          // Label
+          Text(
+            label,
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurfaceVariant,
+              letterSpacing: 0.3,
+            ),
+          ),
+          const SizedBox(height: 6),
+
+          // Fecha
+          Text(
+            formatted,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: color,
+              letterSpacing: -0.5,
+            ),
+          ),
+
           if (isNext) ...[
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: color,
-                elevation: 0,
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: color,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  shadowColor: color.withOpacity(0.3),
+                ),
+                child: Text(
+                  'Mark as watered',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-              child: const Text('Mark as watered'),
             ),
           ],
         ],

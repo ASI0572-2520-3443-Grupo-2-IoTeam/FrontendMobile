@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_care/plants/domain/entities/plant.dart';
-import 'package:plant_care/plants/domain/entities/plant_metric.dart';
 import 'package:plant_care/plants/domain/value_objetcs/plant_status.dart';
 import 'package:plant_care/plants/presentation/cubit/plants_cubit.dart';
 import 'package:plant_care/plants/presentation/pages/plant_detail_page.dart';
