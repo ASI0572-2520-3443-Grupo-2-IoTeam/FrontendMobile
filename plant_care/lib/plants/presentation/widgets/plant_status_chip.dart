@@ -1,4 +1,3 @@
-// DRY & SRP: Un widget reutilizable solo para mostrar el estado.
 import 'package:flutter/material.dart';
 import 'package:plant_care/plants/domain/value_objetcs/plant_status.dart';
 
@@ -16,24 +15,74 @@ class PlantStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final (label, color, icon) = _getStatusProperties(status, context);
 
-    return Chip(
-      label: Text(label),
-      labelStyle:
-          textStyle ??
-          TextStyle(
-            color: Theme.of(context).colorScheme.onPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: isLarge ? 14 : 10,
-          ),
-      avatar: Icon(
-        icon,
-        color: Theme.of(context).colorScheme.onPrimary,
-        size: isLarge ? 20 : 16,
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isLarge ? 16 : 12,
+        vertical: isLarge ? 12 : 8,
       ),
-      backgroundColor: color,
-      padding: EdgeInsets.all(isLarge ? 8.0 : 4.0),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withOpacity(0.15),
+            color.withOpacity(0.08),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(isLarge ? 20 : 16),
+        border: Border.all(
+          color: color.withOpacity(0.3),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: isLarge ? 12 : 8,
+            offset: Offset(0, isLarge ? 4 : 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Ícono con container circular
+          Container(
+            padding: EdgeInsets.all(isLarge ? 6 : 4),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  color.withOpacity(0.25),
+                  color.withOpacity(0.15),
+                ],
+              ),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: isLarge ? 18 : 14,
+            ),
+          ),
+          SizedBox(width: isLarge ? 10 : 8),
+          
+          // Label
+          Text(
+            label,
+            style: textStyle ??
+                theme.textTheme.labelMedium?.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.w700,
+                  fontSize: isLarge ? 15 : 13,
+                  letterSpacing: 0.3,
+                ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -42,18 +91,37 @@ class PlantStatusChip extends StatelessWidget {
     PlantStatus status,
     BuildContext context,
   ) {
-    final colors = Theme.of(context).colorScheme;
     switch (status) {
       case PlantStatus.HEALTHY:
-        return ('Healthy', colors.primary, Icons.check_circle);
+        return (
+          'Healthy',
+          const Color(0xFF34C759),
+          Icons.check_circle_rounded,
+        );
       case PlantStatus.WARNING:
-        return ('Warning', Colors.orange.shade700, Icons.warning);
+        return (
+          'Warning',
+          const Color(0xFFFF9500),
+          Icons.warning_rounded,
+        );
       case PlantStatus.CRITICAL:
-        return ('Critical', colors.error, Icons.dangerous);
+        return (
+          'Critical',
+          const Color(0xFFAF52DE),
+          Icons.priority_high_rounded,
+        );
       case PlantStatus.DANGER:
-        return ('Danger', colors.error, Icons.dangerous);
+        return (
+          'Danger',
+          const Color(0xFFFF3B30),
+          Icons.error_rounded,
+        );
       case PlantStatus.UNKNOWN:
-        return ('Unknown', Colors.grey, Icons.help);
+        return (
+          'Unknown',
+          const Color(0xFF8E8E93),
+          Icons.help_rounded,
+        );
     }
   }
 }

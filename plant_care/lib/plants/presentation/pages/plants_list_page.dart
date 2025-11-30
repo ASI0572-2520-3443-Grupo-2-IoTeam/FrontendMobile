@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; 
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_care/plants/domain/entities/plant.dart';
 import 'package:plant_care/plants/domain/value_objetcs/plant_status.dart';
@@ -11,30 +11,26 @@ class PlantsListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
-    const backgroundColor = Color(0xFFF2F2F7);
+    final theme = Theme.of(context);
+    final backgroundColor = theme.colorScheme.surfaceContainerLowest;
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      
       body: SafeArea(
         top: false,
         bottom: true,
         child: CustomScrollView(
-        
           physics: const BouncingScrollPhysics(),
           slivers: [
-            
+            // AppBar moderno con gradiente
             SliverAppBar.large(
               backgroundColor: backgroundColor,
-              surfaceTintColor:
-                  Colors.transparent, 
-              title: const Text(
-                'Mis Plantas',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -1.0, 
+              surfaceTintColor: Colors.transparent,
+              title: Text(
+                'My Plants',
+                style: theme.textTheme.headlineLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -1.2,
                 ),
               ),
               centerTitle: false,
@@ -42,41 +38,20 @@ class PlantsListPage extends StatelessWidget {
               floating: true,
               pinned: true,
               actions: [
-                
-                IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    child: const Icon(
-                      Icons.search,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                  ),
-                  onPressed: () {
-                    
-                  },
+                _ModernIconButton(
+                  icon: Icons.search_rounded,
+                  onPressed: () {},
+                  isPrimary: false,
                 ),
-                
-                IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.black, 
-                    ),
-                    child: const Icon(Icons.add, size: 20, color: Colors.white),
-                  ),
+                const SizedBox(width: 8),
+                _ModernIconButton(
+                  icon: Icons.add_rounded,
                   onPressed: () {
-                   
                     HapticFeedback.lightImpact();
-                    
                   },
+                  isPrimary: true,
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 20),
               ],
             ),
 
@@ -99,7 +74,7 @@ class PlantsListPage extends StatelessWidget {
                 return const SliverToBoxAdapter(child: SizedBox.shrink());
               },
             ),
-            
+
             SliverToBoxAdapter(
               child: SizedBox(
                 height: 40 + MediaQuery.of(context).padding.bottom,
@@ -112,6 +87,66 @@ class PlantsListPage extends StatelessWidget {
   }
 }
 
+// Botón moderno reutilizable
+class _ModernIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+  final bool isPrimary;
+
+  const _ModernIconButton({
+    required this.icon,
+    required this.onPressed,
+    this.isPrimary = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: isPrimary
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  theme.colorScheme.primary,
+                  theme.colorScheme.primary.withOpacity(0.8),
+                ],
+              )
+            : null,
+        color: isPrimary ? null : theme.colorScheme.surface,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: isPrimary
+              ? theme.colorScheme.primary.withOpacity(0.3)
+              : theme.colorScheme.outlineVariant.withOpacity(0.5),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isPrimary
+                ? theme.colorScheme.primary.withOpacity(0.2)
+                : Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: IconButton(
+        icon: Icon(
+          icon,
+          size: 22,
+          color: isPrimary
+              ? Colors.white
+              : theme.colorScheme.onSurfaceVariant,
+        ),
+        onPressed: onPressed,
+      ),
+    );
+  }
+}
+
 class _PlantsSliverGrid extends StatelessWidget {
   final List<Plant> plants;
 
@@ -119,20 +154,18 @@ class _PlantsSliverGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final screenWidth = MediaQuery.of(context).size.width;
     final crossAxisCount = screenWidth >= 900
         ? 4
         : (screenWidth >= 600 ? 3 : 2);
 
-    const double horizontalPadding =
-        20.0 * 2.0; 
+    const double horizontalPadding = 20.0 * 2.0;
     const double spacing = 16.0;
     final totalSpacing = spacing * (crossAxisCount - 1);
     final cellWidth =
         (screenWidth - horizontalPadding - totalSpacing) / crossAxisCount;
 
-    final desiredHeight = cellWidth * 1.35;
+    final desiredHeight = cellWidth * 1.5; // Aumentado de 1.4 a 1.5
     final childAspectRatio = cellWidth / desiredHeight;
 
     return SliverPadding(
@@ -144,25 +177,30 @@ class _PlantsSliverGrid extends StatelessWidget {
           crossAxisSpacing: spacing,
           childAspectRatio: childAspectRatio,
         ),
-        delegate: SliverChildBuilderDelegate((context, index) {
-          final plant = plants[index];
-          return _AppleStyleCard(plant: plant);
-        }, childCount: plants.length),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final plant = plants[index];
+            return _ModernPlantCard(plant: plant);
+          },
+          childCount: plants.length,
+        ),
       ),
     );
   }
 }
 
-class _AppleStyleCard extends StatelessWidget {
+class _ModernPlantCard extends StatelessWidget {
   final Plant plant;
 
-  const _AppleStyleCard({required this.plant});
+  const _ModernPlantCard({required this.plant});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: () {
-      
+        HapticFeedback.selectionClick();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => PlantDetailPage(plant: plant)),
@@ -170,27 +208,31 @@ class _AppleStyleCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: theme.colorScheme.outlineVariant.withOpacity(0.3),
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
+              color: theme.colorScheme.shadow.withOpacity(0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-          
+            // Imagen con overlay
             Expanded(
-              flex: 4,
+              flex: 5,
               child: Stack(
                 children: [
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(20),
+                      top: Radius.circular(24),
                     ),
                     child: SizedBox(
                       width: double.infinity,
@@ -198,69 +240,119 @@ class _AppleStyleCard extends StatelessWidget {
                       child: Image.network(
                         plant.imgUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Center(
-                          child: Icon(Icons.image_not_supported),
+                        errorBuilder: (_, __, ___) => Container(
+                          color: theme.colorScheme.surfaceContainerHighest,
+                          child: Icon(
+                            Icons.image_not_supported_rounded,
+                            size: 48,
+                            color: theme.colorScheme.outline.withOpacity(0.5),
+                          ),
                         ),
                       ),
                     ),
                   ),
+                  // Gradiente sutil en la imagen
                   Positioned(
-                    top: 10,
-                    right: 10,
-                    child: _StatusBadge(status: plant.status),
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 60,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.3),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Status badge moderno
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: _ModernStatusBadge(status: plant.status),
                   ),
                 ],
               ),
             ),
 
-            // Info inferior
+            // Info inferior con mejor espaciado
             Flexible(
-              flex: 2,
+              flex: 3,
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(14.0), // Reducido de 16 a 14
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      plant.type.toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF8E8E93),
-                        letterSpacing: 0.5,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Type badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3, // Reducido de 4 a 3
+                          ),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer
+                                .withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            plant.type.toUpperCase(),
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: theme.colorScheme.primary,
+                              letterSpacing: 0.8,
+                              fontSize: 9,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(height: 6), // Reducido de 8 a 6
+                        // Nombre
+                        Text(
+                          plant.name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.3,
+                            fontSize: 15, // Reducido de 16 a 15
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      plant.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                        letterSpacing: -0.3,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const Spacer(),
+                    const SizedBox(height: 4), // Agregado spacing mínimo
+                    // Location con mejor diseño
                     Row(
                       children: [
-                        const Icon(
-                          Icons.location_on_rounded,
-                          size: 12,
-                          color: Color(0xFF007AFF),
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.location_on_rounded,
+                            size: 11, // Reducido de 12 a 11
+                            color: theme.colorScheme.primary,
+                          ),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             plant.location,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF007AFF),
-                              fontWeight: FontWeight.w500,
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 11, // Reducido de 12 a 11
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -279,44 +371,50 @@ class _AppleStyleCard extends StatelessWidget {
   }
 }
 
-class _StatusBadge extends StatelessWidget {
+class _ModernStatusBadge extends StatelessWidget {
   final PlantStatus status;
-  const _StatusBadge({required this.status});
+  const _ModernStatusBadge({required this.status});
 
   @override
   Widget build(BuildContext context) {
-
-    Color color;
-    switch (status) {
-      case PlantStatus.HEALTHY:
-        color = const Color(0xFF34C759);
-        break; // Green
-      case PlantStatus.WARNING:
-        color = const Color(0xFFFF9500);
-        break; // Orange
-      case PlantStatus.CRITICAL:
-        color = const Color(0xFFFF3B30);
-        break; // Red
-      default:
-        color = Colors.grey;
-    }
+    final (color, icon) = _getStatusProperties(status);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9), 
-        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          colors: [
+            Colors.white.withOpacity(0.95),
+            Colors.white.withOpacity(0.85),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: color.withOpacity(0.2),
+          width: 1.5,
+        ),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              size: 10,
+              color: color,
+            ),
           ),
           const SizedBox(width: 6),
           Text(
@@ -324,7 +422,8 @@ class _StatusBadge extends StatelessWidget {
             style: TextStyle(
               color: color,
               fontSize: 10,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.3,
             ),
           ),
         ],
@@ -332,39 +431,145 @@ class _StatusBadge extends StatelessWidget {
     );
   }
 
-  String _statusText(PlantStatus s) => s.toString().split('.').last;
+  (Color, IconData) _getStatusProperties(PlantStatus status) {
+    switch (status) {
+      case PlantStatus.HEALTHY:
+        return (const Color(0xFF34C759), Icons.check_circle_rounded);
+      case PlantStatus.WARNING:
+        return (const Color(0xFFFF9500), Icons.warning_rounded);
+      case PlantStatus.CRITICAL:
+        return (const Color(0xFFAF52DE), Icons.priority_high_rounded);
+      case PlantStatus.DANGER:
+        return (const Color(0xFFFF3B30), Icons.error_rounded);
+      case PlantStatus.UNKNOWN:
+        return (const Color(0xFF8E8E93), Icons.help_rounded);
+    }
+  }
+
+  String _statusText(PlantStatus s) {
+    switch (s) {
+      case PlantStatus.HEALTHY:
+        return 'Healthy';
+      case PlantStatus.WARNING:
+        return 'Warning';
+      case PlantStatus.CRITICAL:
+        return 'Critical';
+      case PlantStatus.DANGER:
+        return 'Danger';
+      case PlantStatus.UNKNOWN:
+        return 'Unknown';
+    }
+  }
 }
 
-
+// Estados mejorados
 class _LoadingState extends StatelessWidget {
   const _LoadingState();
+
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator.adaptive(),
-    ); 
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+              shape: BoxShape.circle,
+            ),
+            child: CircularProgressIndicator(
+              color: theme.colorScheme.primary,
+              strokeWidth: 3,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Loading your plants...',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
 class _EmptyState extends StatelessWidget {
   const _EmptyState();
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.energy_savings_leaf_outlined,
-            size: 64,
-            color: Colors.grey[300],
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            "Without plants",
-            style: TextStyle(color: Colors.grey, fontSize: 18),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(40.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    theme.colorScheme.primaryContainer.withOpacity(0.3),
+                    theme.colorScheme.primaryContainer.withOpacity(0.1),
+                  ],
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.energy_savings_leaf_rounded,
+                size: 80,
+                color: theme.colorScheme.primary.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 32),
+            Text(
+              "No plants yet",
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "Start your garden by adding\nyour first plant",
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () {
+                HapticFeedback.lightImpact();
+              },
+              icon: const Icon(Icons.add_rounded),
+              label: const Text('Add Plant'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                elevation: 0,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -373,10 +578,76 @@ class _EmptyState extends StatelessWidget {
 class _ErrorState extends StatelessWidget {
   final String message;
   const _ErrorState({required this.message});
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
-      child: Text(message, style: const TextStyle(color: Colors.red)),
+      child: Padding(
+        padding: const EdgeInsets.all(40.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    theme.colorScheme.errorContainer.withOpacity(0.3),
+                    theme.colorScheme.errorContainer.withOpacity(0.1),
+                  ],
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.error_outline_rounded,
+                size: 80,
+                color: theme.colorScheme.error,
+              ),
+            ),
+            const SizedBox(height: 32),
+            Text(
+              "Oops! Something went wrong",
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.error,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () {
+                HapticFeedback.lightImpact();
+              },
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('Try Again'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.error,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                elevation: 0,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

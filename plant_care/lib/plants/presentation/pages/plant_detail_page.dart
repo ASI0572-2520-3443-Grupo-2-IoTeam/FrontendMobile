@@ -51,10 +51,10 @@ class PlantDetailPageContent extends StatelessWidget {
                   // Título con animación
                   Text(
                     plant.name,
-                    style: theme.textTheme.displaySmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -1,
-                      height: 1.1,
+                    style: theme.textTheme.headlineLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.5,
+                      height: 1.2,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -62,8 +62,8 @@ class PlantDetailPageContent extends StatelessWidget {
                   // Tipo con badge moderno
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                      horizontal: 14,
+                      vertical: 7,
                     ),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -80,10 +80,10 @@ class PlantDetailPageContent extends StatelessWidget {
                     ),
                     child: Text(
                       plant.type.toUpperCase(),
-                      style: theme.textTheme.labelLarge?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                         color: theme.colorScheme.primary,
-                        letterSpacing: 1.5,
+                        letterSpacing: 1.2,
                       ),
                     ),
                   ),
@@ -102,8 +102,9 @@ class PlantDetailPageContent extends StatelessWidget {
                   _ModernContentCard(
                     child: Text(
                       plant.bio,
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.6,
+                        fontSize: 15,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -161,7 +162,8 @@ class PlantDetailPageContent extends StatelessWidget {
                             const SizedBox(height: 12),
                             Text(
                               'Connecting sensors...',
-                              style: theme.textTheme.bodyLarge?.copyWith(
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontSize: 15,
                                 color: theme.colorScheme.onSurfaceVariant,
                               ),
                             ),
@@ -290,7 +292,7 @@ class PlantDetailPageContent extends StatelessWidget {
                   ),
                   child: Icon(
                     statusIcon,
-                    size: 16,
+                    size: 14,
                     color: statusColor,
                   ),
                 ),
@@ -298,9 +300,10 @@ class PlantDetailPageContent extends StatelessWidget {
                 Flexible(
                   child: Text(
                     statusText,
-                    style: theme.textTheme.labelLarge?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       color: statusColor,
                       fontWeight: FontWeight.w700,
+                      fontSize: 14,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -328,16 +331,17 @@ class PlantDetailPageContent extends StatelessWidget {
               children: [
                 Icon(
                   Icons.location_on_rounded,
-                  size: 18,
+                  size: 16,
                   color: theme.colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
                     plant.location,
-                    style: theme.textTheme.labelLarge?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
+                      fontSize: 14,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -427,15 +431,16 @@ class _ModernSectionTitle extends StatelessWidget {
           ),
           child: Icon(
             icon,
-            size: 20,
+            size: 18,
             color: theme.colorScheme.primary,
           ),
         ),
         const SizedBox(width: 12),
         Text(
           title,
-          style: theme.textTheme.titleLarge?.copyWith(
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
+            fontSize: 18,
             letterSpacing: -0.3,
           ),
         ),
@@ -542,8 +547,9 @@ class _WateringTile extends StatelessWidget {
           // Label
           Text(
             label,
-            style: theme.textTheme.labelLarge?.copyWith(
+            style: theme.textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.w600,
+              fontSize: 13,
               color: theme.colorScheme.onSurfaceVariant,
               letterSpacing: 0.3,
             ),
@@ -553,10 +559,11 @@ class _WateringTile extends StatelessWidget {
           // Fecha
           Text(
             formatted,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w800,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              fontSize: 18,
               color: color,
-              letterSpacing: -0.5,
+              letterSpacing: -0.3,
             ),
           ),
 
@@ -579,7 +586,8 @@ class _WateringTile extends StatelessWidget {
                 child: Text(
                   'Mark as watered',
                   style: theme.textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
                     color: Colors.white,
                   ),
                 ),
