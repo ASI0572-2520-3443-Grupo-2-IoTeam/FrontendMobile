@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:plant_care/iam/domain/usecases/google_signin_usecase.dart';
-import 'package:plant_care/presentation/navigation/app_router.dart';
+import 'package:plant_care/community/infrastructure/repositories/http_community_repository.dart';
+import 'package:plant_care/community/presentation/providers/community_provider.dart';
+import 'package:plant_care/iam/application/usecases/google_signin_usecase.dart';
+import 'package:plant_care/shared/presentation/navigation/app_router.dart';
 import 'package:provider/provider.dart';
-import 'iam/data/datasources/auth_api_service.dart';
-import 'iam/data/repositories/auth_repository_impl.dart';
-import 'iam/domain/usecases/login_usecase.dart';
-import 'iam/domain/usecases/register_usecase.dart';
+import 'iam/infrastructure/datasources/auth_api_service.dart';
+import 'iam/infrastructure/repositories/auth_repository_impl.dart';
+import 'iam/application/usecases/login_usecase.dart';
+import 'iam/application/usecases/register_usecase.dart';
 import 'iam/presentation/providers/auth_provider.dart';
 import 'plants/presentation/providers/plant_provider.dart';
-import 'presentation/theme/theme.dart';
-import 'presentation/viewmodel/theme_viewmodel.dart';
+import 'shared/presentation/theme/theme.dart';
+import 'shared/presentation/viewmodel/theme_viewmodel.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -50,6 +52,12 @@ void main() async {
           ),
         ),
         ChangeNotifierProvider(create: (_) => PlantProvider()),
+        ChangeNotifierProvider(
+          create: (context) => CommunityProvider(
+            repository: HttpCommunityRepository(),
+            authProvider: Provider.of<AuthProvider>(context, listen: false),
+          ),
+        ),
       ],
       child: const PlantCareApp(),
     ),

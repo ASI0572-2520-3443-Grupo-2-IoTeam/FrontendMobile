@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plant_care/iam/domain/entities/role.dart';
-import 'package:plant_care/iam/domain/usecases/google_signin_usecase.dart';
+import 'package:plant_care/iam/application/usecases/google_signin_usecase.dart';
 import '../../domain/entities/user.dart';
-import '../../domain/usecases/login_usecase.dart';
-import '../../domain/usecases/register_usecase.dart';
+import '../../application/usecases/login_usecase.dart';
+import '../../application/usecases/register_usecase.dart';
 
 class AuthProvider extends ChangeNotifier {
   final LoginUseCase _loginUseCase;

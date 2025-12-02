@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plant_care/presentation/theme/theme.dart';
-import '../../../presentation/widgets/custom_bottom_navbar.dart';
-import '../../../plant_detail/presentation/widgets/plant_detail_view.dart';
+import 'package:plant_care/shared/presentation/theme/theme.dart';
+import '../../../shared/presentation/widgets/custom_bottom_navbar.dart';
+import '../../../plants/presentation/widgets/plant_detail_view.dart';
 
 class DashboardView extends StatelessWidget {
   const DashboardView({super.key});
@@ -58,19 +58,19 @@ class DashboardView extends StatelessWidget {
                 children: metrics
                     .map(
                       (m) => InkWell(
-                        borderRadius: BorderRadius.circular(16),
-                        splashColor: (m["color"] as Color).withOpacity(0.2),
-                        onTap: () {
-                          // en el futuro: navegación o más métricas
-                        },
-                        child: _MetricCard(
-                          title: m["title"] as String,
-                          value: m["value"] as String,
-                          icon: m["icon"] as IconData,
-                          color: m["color"] as Color,
-                        ),
-                      ),
-                    )
+                    borderRadius: BorderRadius.circular(16),
+                    splashColor: (m["color"] as Color).withOpacity(0.2),
+                    onTap: () {
+                      // en el futuro: navegación o más métricas
+                    },
+                    child: _MetricCard(
+                      title: m["title"] as String,
+                      value: m["value"] as String,
+                      icon: m["icon"] as IconData,
+                      color: m["color"] as Color,
+                    ),
+                  ),
+                )
                     .toList(),
               ),
 
@@ -94,7 +94,7 @@ class DashboardView extends StatelessWidget {
                       PageRouteBuilder(
                         transitionDuration: const Duration(milliseconds: 400),
                         pageBuilder: (_, __, ___) =>
-                            const PlantDetailView(plantId: "1"),
+                        const PlantDetailView(plantId: "1"),
                         transitionsBuilder: (_, animation, __, child) {
                           final offsetAnimation = Tween<Offset>(
                             begin: const Offset(0.1, 0),
@@ -137,12 +137,12 @@ class DashboardView extends StatelessWidget {
                             children: [
                               Text("Aloe Vera",
                                   style:
-                                      Theme.of(context).textTheme.bodyLarge),
+                                  Theme.of(context).textTheme.bodyLarge),
                               const SizedBox(height: 4),
                               Text("Needs watering",
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(
-                                          color: AppTheme.criticalColor)),
+                                      color: AppTheme.criticalColor)),
                               const SizedBox(height: 8),
                               Text("Last watered: 2 days ago",
                                   style: Theme.of(context).textTheme
@@ -174,10 +174,10 @@ class DashboardView extends StatelessWidget {
                 child: Column(
                   children: recentActivity
                       .map((a) => _ActivityItem(
-                            icon: a["icon"] as IconData,
-                            text: a["text"] as String,
-                            time: a["time"] as String,
-                          ))
+                    icon: a["icon"] as IconData,
+                    text: a["text"] as String,
+                    time: a["time"] as String,
+                  ))
                       .toList(),
                 ),
               ),
