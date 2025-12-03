@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_care/plants/domain/entities/plant.dart';
 import 'package:plant_care/plants/domain/value_objetcs/plant_status.dart';
 import 'package:plant_care/plants/presentation/widgets/metrics_card.dart';
-import 'package:plant_care/plants/presentation/cubit/plants_cubit.dart';
+import 'package:plant_care/plants/presentation/components/plants_cubit.dart';
 
 class PlantDetailPage extends StatelessWidget {
   final Plant plant;
@@ -14,7 +14,6 @@ class PlantDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(plant.name)),
       body: SafeArea(
         top: false,
         bottom: true,
@@ -49,7 +48,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop(); 
                 _deletePlant();
               },
               style: TextButton.styleFrom(
@@ -70,7 +69,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Plant deleted successfully')),
         );
-        Navigator.of(context).pop(); // Go back to list
+        Navigator.of(context).pop(); 
       }
     } catch (e) {
       if (mounted) {
@@ -103,7 +102,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Título con animación
+                  
                   Text(
                     widget.plant.name,
                     style: theme.textTheme.headlineLarge?.copyWith(
@@ -114,7 +113,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Tipo con badge moderno
+                
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
@@ -196,7 +195,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
                   ),
                   const SizedBox(height: 32),
 
-                  // Live sensors
+                  
                   _ModernSectionTitle(
                     title: 'Live Sensors',
                     icon: Icons.sensors,
@@ -260,7 +259,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
                         leading: const Icon(Icons.delete, color: Colors.red),
                         title: const Text('Delete Plant'),
                         onTap: () {
-                          Navigator.of(context).pop(); // Close bottom sheet
+                          Navigator.of(context).pop(); 
                           _showDeleteConfirmation();
                         },
                       ),
@@ -333,7 +332,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
 
     return Row(
       children: [
-        // Status Badge moderno
+        
         Expanded(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -386,7 +385,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
         ),
         const SizedBox(width: 16),
 
-        // Location Badge moderno
+        
         Expanded(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -427,7 +426,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
   }
 }
 
-// Componentes reutilizables modernos
+
 class _GlassButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;

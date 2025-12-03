@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:plant_care/analytics/presentation/providers/analytics_provider.dart';
 import 'package:plant_care/iam/presentation/providers/auth_provider.dart';
-import 'package:plant_care/plants/presentation/cubit/plants_cubit.dart';
+import 'package:plant_care/plants/presentation/components/plants_cubit.dart';
 import 'package:plant_care/plants/presentation/providers/plant_provider.dart';
 import 'package:plant_care/shared/presentation/theme/theme.dart';
 import 'package:plant_care/shared/presentation/widgets/custom_bottom_navbar.dart';

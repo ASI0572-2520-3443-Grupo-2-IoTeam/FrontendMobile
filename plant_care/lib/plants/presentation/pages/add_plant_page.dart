@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:plant_care/plants/presentation/cubit/plants_cubit.dart';
+import 'package:plant_care/plants/presentation/components/plants_cubit.dart';
 
 class AddPlantPage extends StatefulWidget {
   const AddPlantPage({super.key});
@@ -32,7 +32,7 @@ class _AddPlantPageState extends State<AddPlantPage> {
       final plantData = {
         'userId': context
             .read<PlantsCubit>()
-            .userId, // Assuming userId is available
+            .userId,
         'name': _nameController.text,
         'type': _typeController.text,
         'imgUrl': _imgUrlController.text,
@@ -41,7 +41,7 @@ class _AddPlantPageState extends State<AddPlantPage> {
       };
 
       context.read<PlantsCubit>().createPlant(plantData);
-      Navigator.of(context).pop(); // Go back after submitting
+      Navigator.of(context).pop(); 
     }
   }
 

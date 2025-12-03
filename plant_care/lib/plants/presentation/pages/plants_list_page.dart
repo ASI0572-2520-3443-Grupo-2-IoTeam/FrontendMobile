@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_care/plants/domain/entities/plant.dart';
 import 'package:plant_care/plants/domain/value_objetcs/plant_status.dart';
-import 'package:plant_care/plants/presentation/cubit/plants_cubit.dart';
+import 'package:plant_care/plants/presentation/components/plants_cubit.dart';
 import 'package:plant_care/plants/presentation/pages/plant_detail_page.dart';
 import 'package:plant_care/plants/presentation/pages/add_plant_page.dart';
 
@@ -23,7 +23,6 @@ class PlantsListPage extends StatelessWidget {
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // AppBar moderno con gradiente
             SliverAppBar.large(
               backgroundColor: backgroundColor,
               surfaceTintColor: Colors.transparent,
@@ -173,7 +172,7 @@ class _PlantsSliverGrid extends StatelessWidget {
     final cellWidth =
         (screenWidth - horizontalPadding - totalSpacing) / crossAxisCount;
 
-    final desiredHeight = cellWidth * 1.5; // Aumentado de 1.4 a 1.5
+    final desiredHeight = cellWidth * 1.6; 
     final childAspectRatio = cellWidth / desiredHeight;
 
     return SliverPadding(
@@ -235,7 +234,7 @@ class _ModernPlantCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Imagen con overlay
+            
             Expanded(
               flex: 5,
               child: Stack(
@@ -261,7 +260,7 @@ class _ModernPlantCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Gradiente sutil en la imagen
+                  
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -280,7 +279,7 @@ class _ModernPlantCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Status badge moderno
+                  
                   Positioned(
                     top: 12,
                     right: 12,
@@ -290,11 +289,11 @@ class _ModernPlantCard extends StatelessWidget {
               ),
             ),
 
-            // Info inferior con mejor espaciado
+            
             Flexible(
               flex: 3,
               child: Padding(
-                padding: const EdgeInsets.all(14.0), // Reducido de 16 a 14
+                padding: const EdgeInsets.all(14.0), 
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -302,11 +301,11 @@ class _ModernPlantCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Type badge
+                        
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
-                            vertical: 3, // Reducido de 4 a 3
+                            vertical: 3, 
                           ),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.primaryContainer
@@ -325,22 +324,22 @@ class _ModernPlantCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(height: 6), // Reducido de 8 a 6
-                        // Nombre
+                        const SizedBox(height: 6), 
+                        
                         Text(
                           plant.name,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w700,
                             letterSpacing: -0.3,
-                            fontSize: 15, // Reducido de 16 a 15
+                            fontSize: 15, 
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4), // Agregado spacing mínimo
-                    // Location con mejor diseño
+                    const SizedBox(height: 4), 
+                    
                     Row(
                       children: [
                         Container(
@@ -351,7 +350,7 @@ class _ModernPlantCard extends StatelessWidget {
                           ),
                           child: Icon(
                             Icons.location_on_rounded,
-                            size: 11, // Reducido de 12 a 11
+                            size: 11, 
                             color: theme.colorScheme.primary,
                           ),
                         ),
@@ -362,7 +361,7 @@ class _ModernPlantCard extends StatelessWidget {
                             style: theme.textTheme.labelMedium?.copyWith(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.w600,
-                              fontSize: 11, // Reducido de 12 a 11
+                              fontSize: 11, 
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
