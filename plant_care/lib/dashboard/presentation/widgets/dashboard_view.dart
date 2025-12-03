@@ -1,193 +1,359 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plant_care/shared/presentation/theme/theme.dart';
 import '../../../shared/presentation/widgets/custom_bottom_navbar.dart';
 import '../../../plants/presentation/widgets/plant_detail_view.dart';
+import '../../../plants/presentation/components/plants_cubit.dart';
+import '../../../plants/presentation/providers/plant_provider.dart';
+import '../../../iam/presentation/providers/auth_provider.dart';
+import '../../../plants/domain/entities/plant.dart';
+import '../../../plants/domain/value_objetcs/plant_status.dart';
 
 class DashboardView extends StatelessWidget {
   const DashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const metrics = [
-      {"title": "Humidity", "value": "65%", "icon": Icons.water_drop, "color": Colors.blue},
-      {"title": "Temperature", "value": "22°C", "icon": Icons.thermostat, "color": Colors.orange},
-      {"title": "Total Plants", "value": "12", "icon": Icons.local_florist, "color": Colors.green},
-      {"title": "Alerts", "value": "3", "icon": Icons.warning_amber, "color": Colors.red},
-    ];
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final userId = auth.currentUser?.id;
+    final userName = auth.currentUser?.username ?? "User";
+    final token = auth.token;
 
-    final recentActivity = [
-      {"icon": Icons.water_drop, "text": "Ficus was watered", "time": "5 min ago"},
-      {"icon": Icons.warning, "text": "Aloe Vera needs water", "time": "1 hr ago"},
-      {"icon": Icons.thermostat, "text": "Temperature back to normal", "time": "3 hrs ago"},
-    ];
+    if (userId == null || token == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: ListView(
-            children: [
-              // Header
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Hello",
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "Here’s the latest update about your plants 🌱",
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
+    return BlocProvider(
+      create: (_) =>
+          PlantProvider.createPlantsCubit(userId: userId, token: token)
+            ..fetchPlants(),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: SafeArea(
+          child: BlocBuilder<PlantsCubit, PlantsState>(
+            builder: (context, state) {
+              if (state is PlantsLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-              const SizedBox(height: 24),
+              List<Plant> plants = [];
+              if (state is PlantsLoaded) {
+                plants = state.plants;
+              }
 
-              // Métricas con InkWell
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 1.2,
-                children: metrics
-                    .map(
-                      (m) => InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    splashColor: (m["color"] as Color).withOpacity(0.2),
-                    onTap: () {
-                      // en el futuro: navegación o más métricas
-                    },
-                    child: _MetricCard(
-                      title: m["title"] as String,
-                      value: m["value"] as String,
-                      icon: m["icon"] as IconData,
-                      color: m["color"] as Color,
-                    ),
-                  ),
-                )
-                    .toList(),
-              ),
+              // Calculate metrics
+              final totalPlants = plants.length;
 
-              const SizedBox(height: 24),
+              double avgHumidity = 0;
+              double avgTemperature = 0;
+              int alerts = 0;
 
-              // Planta que necesita atención
-              Text("Needs Attention",
-                  style: Theme.of(context).textTheme.headlineSmall),
-              const SizedBox(height: 12),
+              if (plants.isNotEmpty) {
+                double totalHum = 0;
+                double totalTemp = 0;
+                int countWithMetrics = 0;
 
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                clipBehavior: Clip.antiAlias,
-                elevation: 2,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 400),
-                        pageBuilder: (_, __, ___) =>
-                        const PlantDetailView(plantId: "1"),
-                        transitionsBuilder: (_, animation, __, child) {
-                          final offsetAnimation = Tween<Offset>(
-                            begin: const Offset(0.1, 0),
-                            end: Offset.zero,
-                          ).animate(
-                            CurvedAnimation(
-                              parent: animation,
-                              curve: Curves.easeOutCubic,
-                            ),
-                          );
-                          return SlideTransition(
-                              position: offsetAnimation, child: child);
-                        },
-                      ),
-                    );
-                  },
-                  splashColor: AppTheme.primaryGreen.withOpacity(0.2),
-                  highlightColor: Colors.transparent,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
+                for (var p in plants) {
+                  if (p.status != PlantStatus.HEALTHY) {
+                    alerts++;
+                  }
+                  final metric = p.latestMetric;
+                  if (metric != null) {
+                    totalHum += metric.humidity;
+                    totalTemp += metric.temperature;
+                    countWithMetrics++;
+                  }
+                }
+
+                if (countWithMetrics > 0) {
+                  avgHumidity = totalHum / countWithMetrics;
+                  avgTemperature = totalTemp / countWithMetrics;
+                }
+              }
+
+              final metrics = [
+                {
+                  "title": "Humidity",
+                  "value": "${avgHumidity.toStringAsFixed(1)}%",
+                  "icon": Icons.water_drop,
+                  "color": Colors.blue,
+                },
+                {
+                  "title": "Temperature",
+                  "value": "${avgTemperature.toStringAsFixed(1)}°C",
+                  "icon": Icons.thermostat,
+                  "color": Colors.orange,
+                },
+                {
+                  "title": "Total Plants",
+                  "value": "$totalPlants",
+                  "icon": Icons.local_florist,
+                  "color": Colors.green,
+                },
+                {
+                  "title": "Alerts",
+                  "value": "$alerts",
+                  "icon": Icons.warning_amber,
+                  "color": Colors.red,
+                },
+              ];
+
+              // Find plant needing attention
+              Plant? needsAttentionPlant;
+              try {
+                needsAttentionPlant = plants.firstWhere(
+                  (p) =>
+                      p.status == PlantStatus.CRITICAL ||
+                      p.status == PlantStatus.DANGER ||
+                      p.status == PlantStatus.WARNING,
+                );
+              } catch (_) {
+                // If no critical/danger/warning, maybe show the one with lowest soil humidity if available?
+                // For now, just leave it null
+              }
+
+              // Generate recent activity
+              // We'll simulate activity based on lastWatered date
+              final recentActivity = plants.map((p) {
+                final now = DateTime.now();
+                final diff = now.difference(p.lastWatered);
+                String timeText;
+                if (diff.inMinutes < 60) {
+                  timeText = "${diff.inMinutes} min ago";
+                } else if (diff.inHours < 24) {
+                  timeText = "${diff.inHours} hrs ago";
+                } else {
+                  timeText = "${diff.inDays} days ago";
+                }
+
+                return {
+                  "icon": Icons.water_drop,
+                  "text": "${p.name} was watered",
+                  "time": timeText,
+                  "date": p.lastWatered,
+                };
+              }).toList();
+
+              // Sort by date descending
+              recentActivity.sort(
+                (a, b) =>
+                    (b["date"] as DateTime).compareTo(a["date"] as DateTime),
+              );
+
+              // Take top 3
+              final displayActivity = recentActivity.take(3).toList();
+
+              return Padding(
+                padding: const EdgeInsets.all(16),
+                child: ListView(
+                  children: [
+                    // Header
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Imagen de la planta (placeholder)
-                        Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: AppTheme.secondaryGreen.withOpacity(0.2),
-                          ),
-                          child: const Icon(Icons.local_florist,
-                              size: 40, color: AppTheme.primaryGreen),
+                        Text(
+                          "Hello, $userName",
+                          style: Theme.of(context).textTheme.headlineLarge,
                         ),
-                        const SizedBox(width: 16),
-
-                        // Info planta
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Aloe Vera",
-                                  style:
-                                  Theme.of(context).textTheme.bodyLarge),
-                              const SizedBox(height: 4),
-                              Text("Needs watering",
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(
-                                      color: AppTheme.criticalColor)),
-                              const SizedBox(height: 8),
-                              Text("Last watered: 2 days ago",
-                                  style: Theme.of(context).textTheme
-                                      .bodySmall),
-                            ],
-                          ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Here’s the latest update about your plants 🌱",
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
-                        ElevatedButton(
-                          onPressed: () => context.go("/plant/1"),
-                          child: const Text("View"),
-                        )
                       ],
                     ),
-                  ),
-                ),
-              ),
 
-              const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-              // Actividad reciente
-              Text("Recent Activity",
-                  style: Theme.of(context).textTheme.headlineSmall),
-              const SizedBox(height: 12),
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                    // Metrics
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 1.2,
+                      children: metrics
+                          .map(
+                            (m) => InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              splashColor: (m["color"] as Color).withOpacity(
+                                0.2,
+                              ),
+                              onTap: () {},
+                              child: _MetricCard(
+                                title: m["title"] as String,
+                                value: m["value"] as String,
+                                icon: m["icon"] as IconData,
+                                color: m["color"] as Color,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Needs Attention
+                    if (needsAttentionPlant != null) ...[
+                      Text(
+                        "Needs Attention",
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 12),
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        elevation: 2,
+                        child: InkWell(
+                          onTap: () {
+                            context.push("/plant/${needsAttentionPlant!.id}");
+                          },
+                          splashColor: AppTheme.primaryGreen.withOpacity(0.2),
+                          highlightColor: Colors.transparent,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    color: AppTheme.secondaryGreen.withOpacity(
+                                      0.2,
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      needsAttentionPlant.imgUrl,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return const Icon(
+                                              Icons.local_florist,
+                                              size: 40,
+                                              color: AppTheme.primaryGreen,
+                                            );
+                                          },
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        needsAttentionPlant.name,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        _statusText(needsAttentionPlant.status),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              color: AppTheme.criticalColor,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        "Last watered: ${_formatDate(needsAttentionPlant.lastWatered)}",
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodySmall,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => context.push(
+                                    "/plant/${needsAttentionPlant!.id}",
+                                  ),
+                                  child: const Text("View"),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+
+                    // Recent Activity
+                    if (displayActivity.isNotEmpty) ...[
+                      Text(
+                        "Recent Activity",
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 12),
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 2,
+                        child: Column(
+                          children: displayActivity
+                              .map(
+                                (a) => _ActivityItem(
+                                  icon: a["icon"] as IconData,
+                                  text: a["text"] as String,
+                                  time: a["time"] as String,
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ] else ...[
+                      Text(
+                        "Recent Activity",
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 12),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("No recent activity recorded."),
+                      ),
+                    ],
+                  ],
                 ),
-                elevation: 2,
-                child: Column(
-                  children: recentActivity
-                      .map((a) => _ActivityItem(
-                    icon: a["icon"] as IconData,
-                    text: a["text"] as String,
-                    time: a["time"] as String,
-                  ))
-                      .toList(),
-                ),
-              ),
-            ],
+              );
+            },
           ),
         ),
+        bottomNavigationBar: const CustomBottomNavBar(currentIndex: 0),
       ),
-
-      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 0),
     );
+  }
+
+  String _statusText(PlantStatus s) {
+    switch (s) {
+      case PlantStatus.HEALTHY:
+        return 'Healthy';
+      case PlantStatus.WARNING:
+        return 'Needs checkup';
+      case PlantStatus.CRITICAL:
+        return 'Critical condition';
+      case PlantStatus.DANGER:
+        return 'In Danger';
+      case PlantStatus.UNKNOWN:
+        return 'Unknown status';
+    }
+  }
+
+  String _formatDate(DateTime d) {
+    // Simple formatter, can be improved
+    return "${d.day}/${d.month}/${d.year}";
   }
 }
 
@@ -217,11 +383,13 @@ class _MetricCard extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 28),
             const SizedBox(height: 8),
-            Text(value,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineSmall
-                    ?.copyWith(color: color, fontWeight: FontWeight.bold)),
+            Text(
+              value,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: color,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 4),
             Text(title, style: Theme.of(context).textTheme.bodyMedium),
           ],
