@@ -4,6 +4,7 @@ import 'package:plant_care/shared/presentation/theme/theme.dart';
 import 'package:plant_care/shared/presentation/viewmodel/theme_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../widgets/custom_bottom_navbar.dart';
+import 'package:plant_care/iam/presentation/providers/auth_provider.dart';
 
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
@@ -21,6 +22,9 @@ class _SettingsViewState extends State<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    final user = auth.currentUser;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -52,19 +56,18 @@ class _SettingsViewState extends State<SettingsView> {
                 child: ListTile(
                   leading: CircleAvatar(
                     backgroundColor: AppTheme.primaryGreen.withOpacity(0.2),
-                    child: const Icon(Icons.person,
-                        color: AppTheme.primaryGreen),
+                    child: const Icon(Icons.person, color: AppTheme.primaryGreen),
                   ),
-                  title: Text("Sarah Johnson",
-                      style: Theme.of(context).textTheme.bodyLarge),
-                  subtitle: Text("sarah@example.com",
-                      style: Theme.of(context).textTheme.bodyMedium),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit, color: AppTheme.primaryGreen),
-                    onPressed: () {
-                      // TODO: editar perfil
-                    },
+                  title: Text(
+                    user?.username ?? 'User',
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
+                  subtitle: Text(
+                    user?.email ?? 'No email',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.primaryGreen),
+                  onTap: () => context.go('/profile'),
                 ),
               ),
               Card(
