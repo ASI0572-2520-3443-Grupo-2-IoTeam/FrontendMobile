@@ -9,7 +9,7 @@ class AuthApiService {
   AuthApiService({this.baseUrl = 'https://plantcare-awcchhb2bfg3hxgf.canadacentral-01.azurewebsites.net/api/v1'});
 
   Future<Map<String, dynamic>> register(Map<String, dynamic> data) async {
-    final url = Uri.parse('$baseUrl/authentication/signup');
+    final url = Uri.parse('$baseUrl/authentication/sign-up');
     debugPrint('➡️ POST $url');
     debugPrint('📦 Body: $data');
 
@@ -39,7 +39,7 @@ class AuthApiService {
     required String email,
     required String password,
   }) async {
-    final uri = Uri.parse('$baseUrl/authentication/signin');
+    final uri = Uri.parse('$baseUrl/authentication/sign-in');
     debugPrint("➡️ POST $uri");
     debugPrint("📦 Body: {email: $email, password: ***}");
 
@@ -62,7 +62,7 @@ class AuthApiService {
   }
 
   Future<Map<String, dynamic>> googleSignIn(String idToken) async {
-    final uri = Uri.parse('$baseUrl/authentication/google/signin');
+    final uri = Uri.parse('$baseUrl/authentication/google/sign-in');
     debugPrint("➡️ POST $uri");
 
     final response = await http.post(

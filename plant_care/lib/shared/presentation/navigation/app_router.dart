@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../dashboard/presentation/widgets/dashboard_view.dart';
 import '../../../plants/presentation/plant_detail_view.dart';
+import '../../../analytics/presentation/pages/analytics_view.dart';
 import '../widgets/custom_bottom_navbar.dart';
 import '../views/settings_view.dart';
 import '../views/search_filter_view.dart';
@@ -12,6 +13,7 @@ import 'package:plant_care/iam/presentation/pages/register_page.dart';
 import 'package:plant_care/shared/presentation/views/splash_view.dart';
 import 'package:plant_care/community/presentation/screens/join_community_screen.dart';
 import 'package:plant_care/community/presentation/screens/community_screen.dart';
+import 'package:plant_care/profile/presentation/views/profile_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -60,10 +62,23 @@ final GoRouter appRouter = GoRouter(
           const CommunityScreen(), 
     ),
     GoRoute(
+      path: '/analytics',
+      name: 'analytics',
+      builder: (context, state) => Scaffold(
+        body: const AnalyticsView(),
+        bottomNavigationBar: const CustomBottomNavBar(currentIndex: 3),
+      ),
+    ),
+    GoRoute(
       path: '/settings',
       name: 'settings',
       builder: (context, state) =>
           const SettingsView(), 
+    ),
+    GoRoute(
+      path: '/profile',
+      name: 'profile',
+      builder: (context, state) => const ProfileView(),
     ),
     
     GoRoute(

@@ -1,9 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_care/plants/domain/entities/plant.dart';
 import 'package:plant_care/plants/domain/value_objetcs/plant_status.dart';
-import 'package:plant_care/plants/presentation/cubit/plants_cubit.dart';
+import 'package:plant_care/plants/presentation/components/plants_cubit.dart';
 import 'package:plant_care/plants/presentation/pages/plant_detail_page.dart';
 import 'package:plant_care/plants/presentation/pages/add_plant_page.dart';
 
@@ -23,7 +24,6 @@ class PlantsListPage extends StatelessWidget {
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // AppBar moderno con gradiente
             SliverAppBar.large(
               backgroundColor: backgroundColor,
               surfaceTintColor: Colors.transparent,
@@ -173,7 +173,7 @@ class _PlantsSliverGrid extends StatelessWidget {
     final cellWidth =
         (screenWidth - horizontalPadding - totalSpacing) / crossAxisCount;
 
-    final desiredHeight = cellWidth * 1.5; // Aumentado de 1.4 a 1.5
+    final desiredHeight = cellWidth * 1.6;
     final childAspectRatio = cellWidth / desiredHeight;
 
     return SliverPadding(
@@ -218,163 +218,195 @@ class _ModernPlantCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: theme.colorScheme.outlineVariant.withOpacity(0.3),
-            width: 1.5,
-          ),
           boxShadow: [
             BoxShadow(
-              color: theme.colorScheme.shadow.withOpacity(0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
+              color: theme.colorScheme.shadow.withOpacity(0.12),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Imagen con overlay
-            Expanded(
-              flex: 5,
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(24),
-                    ),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: double.infinity,
-                      child: Image.network(
-                        plant.imgUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: theme.colorScheme.surfaceContainerHighest,
-                          child: Icon(
-                            Icons.image_not_supported_rounded,
-                            size: 48,
-                            color: theme.colorScheme.outline.withOpacity(0.5),
-                          ),
-                        ),
-                      ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              // Background Image
+              Positioned.fill(
+                child: Image.network(
+                  plant.imgUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    child: Icon(
+                      Icons.image_not_supported_rounded,
+                      size: 48,
+                      color: theme.colorScheme.outline.withOpacity(0.5),
                     ),
                   ),
-                  // Gradiente sutil en la imagen
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [
-                            Colors.black.withOpacity(0.3),
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Status badge moderno
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: _ModernStatusBadge(status: plant.status),
-                  ),
-                ],
-              ),
-            ),
-
-            // Info inferior con mejor espaciado
-            Flexible(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(14.0), // Reducido de 16 a 14
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Type badge
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3, // Reducido de 4 a 3
-                          ),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer
-                                .withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            plant.type.toUpperCase(),
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: theme.colorScheme.primary,
-                              letterSpacing: 0.8,
-                              fontSize: 9,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(height: 6), // Reducido de 8 a 6
-                        // Nombre
-                        Text(
-                          plant.name,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.3,
-                            fontSize: 15, // Reducido de 16 a 15
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4), // Agregado spacing mínimo
-                    // Location con mejor diseño
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.location_on_rounded,
-                            size: 11, // Reducido de 12 a 11
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            plant.location,
-                            style: theme.textTheme.labelMedium?.copyWith(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 11, // Reducido de 12 a 11
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
                 ),
               ),
-            ),
-          ],
+
+              // Gradient Overlay
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.7),
+                      ],
+                      stops: const [0.0, 0.5, 1.0],
+                    ),
+                  ),
+                ),
+              ),
+
+              // Status Badge
+              Positioned(
+                top: 12,
+                right: 12,
+                child: _ModernStatusBadge(status: plant.status),
+              ),
+
+              // Glass Content Card at Bottom
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.white.withOpacity(0.25),
+                            Colors.white.withOpacity(0.15),
+                          ],
+                        ),
+                        border: Border(
+                          top: BorderSide(
+                            color: Colors.white.withOpacity(0.3),
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Type Badge
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.4),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              plant.type.toUpperCase(),
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                letterSpacing: 0.8,
+                                fontSize: 9,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    offset: const Offset(0, 1),
+                                    blurRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+
+                          // Plant Name
+                          Text(
+                            plant.name,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.3,
+                              fontSize: 15,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withOpacity(0.5),
+                                  offset: const Offset(0, 1),
+                                  blurRadius: 3,
+                                ),
+                              ],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Location
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.25),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.location_on_rounded,
+                                  size: 11,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  plant.location,
+                                  style: theme.textTheme.labelMedium?.copyWith(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 11,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black.withOpacity(0.3),
+                                        offset: const Offset(0, 1),
+                                        blurRadius: 2,
+                                      ),
+                                    ],
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

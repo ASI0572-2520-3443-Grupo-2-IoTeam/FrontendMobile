@@ -10,6 +10,7 @@ import 'iam/application/usecases/login_usecase.dart';
 import 'iam/application/usecases/register_usecase.dart';
 import 'iam/presentation/providers/auth_provider.dart';
 import 'plants/presentation/providers/plant_provider.dart';
+import 'analytics/presentation/providers/analytics_provider.dart';
 import 'shared/presentation/theme/theme.dart';
 import 'shared/presentation/viewmodel/theme_viewmodel.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -52,6 +53,7 @@ void main() async {
           ),
         ),
         ChangeNotifierProvider(create: (_) => PlantProvider()),
+        ChangeNotifierProvider(create: (_) => AnalyticsProvider()),
         ChangeNotifierProvider(
           create: (context) => CommunityProvider(
             repository: HttpCommunityRepository(),

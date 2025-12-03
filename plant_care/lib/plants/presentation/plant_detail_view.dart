@@ -8,8 +8,6 @@ import 'package:plant_care/plants/presentation/pages/plant_detail_page.dart';
 import 'package:provider/provider.dart';
 import 'package:plant_care/iam/presentation/providers/auth_provider.dart';
 
-// PlantDetailView: carga la lista de plantas desde el backend y muestra
-// la vista de detalle para la planta cuyo id se pase por ruta.
 class PlantDetailView extends StatelessWidget {
   final String plantId;
   const PlantDetailView({super.key, required this.plantId});

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:plant_care/plants/domain/entities/plant.dart';
 import 'package:plant_care/plants/domain/value_objetcs/plant_status.dart';
 import 'package:plant_care/plants/presentation/widgets/metrics_card.dart';
-import 'package:plant_care/plants/presentation/cubit/plants_cubit.dart';
+import 'package:plant_care/plants/presentation/components/plants_cubit.dart';
 
 class PlantDetailPage extends StatelessWidget {
   final Plant plant;
@@ -14,7 +14,6 @@ class PlantDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(plant.name)),
       body: SafeArea(
         top: false,
         bottom: true,
@@ -49,7 +48,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop();
                 _deletePlant();
               },
               style: TextButton.styleFrom(
@@ -70,7 +69,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Plant deleted successfully')),
         );
-        Navigator.of(context).pop(); // Go back to list
+        Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
@@ -103,7 +102,6 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Título con animación
                   Text(
                     widget.plant.name,
                     style: theme.textTheme.headlineLarge?.copyWith(
@@ -114,7 +112,6 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Tipo con badge moderno
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
@@ -196,7 +193,6 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
                   ),
                   const SizedBox(height: 32),
 
-                  // Live sensors
                   _ModernSectionTitle(
                     title: 'Live Sensors',
                     icon: Icons.sensors,
@@ -260,7 +256,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
                         leading: const Icon(Icons.delete, color: Colors.red),
                         title: const Text('Delete Plant'),
                         onTap: () {
-                          Navigator.of(context).pop(); // Close bottom sheet
+                          Navigator.of(context).pop();
                           _showDeleteConfirmation();
                         },
                       ),
@@ -299,6 +295,7 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
 
   Widget _buildInfoRow(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     Color statusColor;
     String statusText;
     IconData statusIcon;
@@ -333,92 +330,130 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
 
     return Row(
       children: [
-        // Status Badge moderno
         Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  statusColor.withOpacity(0.15),
-                  statusColor.withOpacity(0.08),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: statusColor.withOpacity(0.3),
-                width: 1.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: statusColor.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.2),
-                    shape: BoxShape.circle,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: isDark
+                        ? [
+                            statusColor.withOpacity(0.25),
+                            statusColor.withOpacity(0.15),
+                          ]
+                        : [
+                            statusColor.withOpacity(0.2),
+                            statusColor.withOpacity(0.1),
+                          ],
                   ),
-                  child: Icon(statusIcon, size: 14, color: statusColor),
-                ),
-                const SizedBox(width: 10),
-                Flexible(
-                  child: Text(
-                    statusText,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: statusColor,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: statusColor.withOpacity(0.3),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: statusColor.withOpacity(0.15),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  ],
                 ),
-              ],
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: statusColor.withOpacity(0.25),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(statusIcon, size: 14, color: statusColor),
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(
+                        statusText,
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: statusColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
         const SizedBox(width: 16),
 
-        // Location Badge moderno
         Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: theme.colorScheme.outlineVariant.withOpacity(0.5),
-                width: 1.5,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.location_on_rounded,
-                  size: 16,
-                  color: theme.colorScheme.primary,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    widget.plant.location,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: isDark
+                        ? [
+                            theme.colorScheme.surface.withOpacity(0.6),
+                            theme.colorScheme.surface.withOpacity(0.4),
+                          ]
+                        : [
+                            Colors.white.withOpacity(0.7),
+                            Colors.white.withOpacity(0.5),
+                          ],
                   ),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: theme.colorScheme.outlineVariant.withOpacity(0.3),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.colorScheme.shadow.withOpacity(0.08),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-              ],
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.location_on_rounded,
+                      size: 16,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        widget.plant.location,
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -427,7 +462,6 @@ class _PlantDetailPageContentState extends State<PlantDetailPageContent> {
   }
 }
 
-// Componentes reutilizables modernos
 class _GlassButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
@@ -519,26 +553,47 @@ class _ModernContentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: theme.colorScheme.outlineVariant.withOpacity(0.3),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: theme.colorScheme.shadow.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [
+                      theme.colorScheme.surface.withOpacity(0.6),
+                      theme.colorScheme.surface.withOpacity(0.4),
+                    ]
+                  : [
+                      Colors.white.withOpacity(0.7),
+                      Colors.white.withOpacity(0.5),
+                    ],
+            ),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.1)
+                  : Colors.white.withOpacity(0.3),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.shadow.withOpacity(0.08),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
+          child: child,
+        ),
       ),
-      child: child,
     );
   }
 }
@@ -561,93 +616,130 @@ class _WateringTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final formatted = '${date.day}/${date.month}/${date.year}';
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [color.withOpacity(0.12), color.withOpacity(0.06)],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [color.withOpacity(0.2), color.withOpacity(0.1)]
+                  : [color.withOpacity(0.15), color.withOpacity(0.08)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: color.withOpacity(isDark ? 0.3 : 0.25),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.15),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Glass icon container
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [color.withOpacity(0.3), color.withOpacity(0.2)],
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(icon, color: Colors.white, size: 24),
+              ),
+              const SizedBox(height: 16),
+
+              // Label
+              Text(
+                label,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  color: theme.colorScheme.onSurfaceVariant,
+                  letterSpacing: 0.3,
+                ),
+              ),
+              const SizedBox(height: 6),
+
+              // Date
+              Text(
+                formatted,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                  color: color,
+                  letterSpacing: -0.3,
+                ),
+              ),
+
+              if (isNext) ...[
+                const SizedBox(height: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [color, color.withOpacity(0.8)],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: color.withOpacity(0.4),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          shadowColor: Colors.transparent,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          'Mark as watered',
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: color.withOpacity(0.25), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Ícono circular
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [color.withOpacity(0.25), color.withOpacity(0.15)],
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(height: 16),
-
-          // Label
-          Text(
-            label,
-            style: theme.textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-              color: theme.colorScheme.onSurfaceVariant,
-              letterSpacing: 0.3,
-            ),
-          ),
-          const SizedBox(height: 6),
-
-          // Fecha
-          Text(
-            formatted,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-              fontSize: 18,
-              color: color,
-              letterSpacing: -0.3,
-            ),
-          ),
-
-          if (isNext) ...[
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: color,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  shadowColor: color.withOpacity(0.3),
-                ),
-                child: Text(
-                  'Mark as watered',
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ],
       ),
     );
   }
